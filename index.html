@@ -16,6 +16,7 @@
     --blue: #3b82f6;
     --card: #0b1220;
     --badge: #1f2937;
+    --purple: #a78bfa;
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
@@ -34,6 +35,7 @@
   .wrap { max-width: 1400px; margin: 0 auto; padding: 16px; }
   h1 { margin: 0 0 8px 0; font-size: 22px; }
   h2 { margin: 16px 0 8px 0; font-size: 18px; }
+  h3 { margin: 12px 0 6px 0; font-size: 16px; }
   .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .row.right { justify-content: flex-end; }
   .spacer { flex: 1; }
@@ -47,6 +49,7 @@
   .btn.success { background: var(--accent); border-color: #16a34a; color:#0b1320; }
   .btn.warn { background: var(--warn); border-color: #d97706; color:#0b1320; }
   .btn.danger { background: var(--danger); border-color: #dc2626; color: #0b1320; }
+  .btn.timer { background: var(--purple); border-color: #9333ea; color:#0b1320; }
   input[type="text"], input[type="number"], input[type="date"], textarea, select {
     background: #0b1220; color: var(--text); border: 1px solid #374151;
     padding: 8px 10px; border-radius: 10px; outline: none; width: 100%;
@@ -65,6 +68,8 @@
     display: inline-block; font-size: 11px; color: var(--text);
     background: var(--badge); padding: 3px 8px; border-radius: 999px; border: 1px solid #374151;
   }
+  .badge.timer-active { background: rgba(167, 139, 250, 0.3); border-color: var(--purple); color: #e9d5ff; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
   .status-dot {
     display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px;
     box-shadow: 0 0 0 2px rgba(0,0,0,0.2) inset;
@@ -84,11 +89,12 @@
   .pill {
     display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid #374151; background:#0b1220;
   }
+  .pill.user { background: rgba(59,130,246,0.2); border-color: #2563eb; }
   .small { font-size: 12px; }
   .table { width:100%; border-collapse: collapse; }
   .table th, .table td { border-bottom: 1px dashed #1f2937; padding: 6px; text-align: left; font-size: 12px; }
   .right-text { text-align: right; }
-  .toast { position: fixed; right: 12px; bottom: 12px; background: #111827; border: 1px solid #374151; color: var(--text); padding: 10px 12px; border-radius: 10px; opacity: 0.95; }
+  .toast { position: fixed; right: 12px; bottom: 12px; background: #111827; border: 1px solid #374151; color: var(--text); padding: 10px 12px; border-radius: 10px; opacity: 0.95; z-index: 1000; }
   .hidden { display: none; }
   .toggle-btn {
     background: none; border: none; color: var(--muted); cursor: pointer; padding: 0;
@@ -107,7 +113,7 @@
   }
   .log-row {
     background: rgba(31,41,55,0.5); border: 1px solid #1f2937; border-radius: 8px; padding: 10px; margin: 6px 0;
-    display: grid; grid-template-columns: 120px 120px 100px 120px 1fr; gap: 10px; align-items: center; font-size: 12px;
+    display: grid; grid-template-columns: 120px 100px 100px 120px 120px 1fr; gap: 10px; align-items: center; font-size: 12px;
   }
   .log-badge { padding: 2px 6px; border-radius: 6px; font-size: 11px; text-align: center; }
   .log-on-time { background: rgba(34,197,94,0.2); color: #86efac; }
@@ -116,14 +122,22 @@
   .modal-backdrop {
     position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100;
   }
-  .modal { background: #0b1320; border: 1px solid #1f2937; border-radius: 16px; padding: 16px; max-width: 560px; width: 96%; }
+  .modal { background: #0b1320; border: 1px solid #1f2937; border-radius: 16px; padding: 16px; max-width: 560px; width: 96%; max-height: 90vh; overflow-y: auto; }
   .modal h3 { margin-top: 0; }
-  .sync-status { font-size: 11px; padding: 4px 8px; border-radius: 4px; background: rgba(59,130,246,0.2); color: #93c5fd; }
   .setup-modal { background: #0b1320; border: 1px solid #1f2937; border-radius: 16px; padding: 20px; max-width: 600px; width: 96%; }
   .setup-modal h2 { margin-top: 0; }
   .setup-modal p { line-height: 1.6; }
   .setup-modal code { background: #1f2937; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
   .setup-modal textarea { font-family: monospace; font-size: 12px; max-height: 200px; }
+  .sync-status { font-size: 11px; padding: 4px 8px; border-radius: 4px; background: rgba(59,130,246,0.2); color: #93c5fd; }
+  .timer-card {
+    background: linear-gradient(180deg, #5b21b6, #3f0f6b);
+    border: 2px solid var(--purple); border-radius: 16px; padding: 14px; position: relative;
+    box-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+  }
+  .timer-display { font-size: 32px; font-weight: bold; color: var(--purple); text-align: center; margin: 12px 0; font-family: monospace; }
+  .timer-site-name { font-size: 14px; color: var(--text); text-align: center; margin-bottom: 12px; }
+  .timer-actions { display: flex; gap: 8px; justify-content: center; }
 </style>
 </head>
 <body>
@@ -132,6 +146,7 @@
     <div class="row">
       <h1>Scan Tracker</h1>
       <span class="spacer"></span>
+      <div class="pill user"><strong id="currentUser">No User</strong> <button class="btn" id="btnChangeUser" style="padding: 4px 8px; margin-left: 6px; font-size: 11px;">Change</button></div>
       <span id="syncStatus" class="sync-status">📱 Local Mode</span>
       <span id="clock" class="pill small"></span>
       <button class="btn" id="btnNotify">Enable Notifications</button>
@@ -175,6 +190,12 @@
       <div class="spacer"></div>
       <div class="pill small"><span id="totalSites">0</span> Sites</div>
     </div>
+
+    <div id="timersSection" style="display:none; margin-bottom: 16px;">
+      <h2>⏱️ Quick Timers</h2>
+      <div id="timersList" class="grid"></div>
+    </div>
+
     <div id="grid" class="grid" aria-live="polite"></div>
   </div>
 
@@ -213,6 +234,18 @@
     Single-file app — all data stored locally. Optional GitHub sync for multi-user access.
   </footer>
 </main>
+
+<!-- User Setup Modal -->
+<div class="modal-backdrop" id="userModal">
+  <div class="modal">
+    <h3>👤 Who's Using This?</h3>
+    <p class="muted small">Enter your name so logs show who made each scan.</p>
+    <input id="userName" type="text" placeholder="Your name (e.g., John, Sarah)" />
+    <div class="row right" style="margin-top:12px;">
+      <button class="btn success" id="btnSaveUser">Save User</button>
+    </div>
+  </div>
+</div>
 
 <!-- Setup Sync Modal -->
 <div class="modal-backdrop" id="setupSyncModal">
@@ -305,12 +338,29 @@
   </div>
 </div>
 
+<!-- Quick Timer Modal -->
+<div class="modal-backdrop" id="timerModal">
+  <div class="modal">
+    <h3>⏱️ Set Quick Timer</h3>
+    <p class="muted small">Create a reminder to check this site later.</p>
+    <input id="timerSiteName" type="text" disabled style="background: #1f2937; margin-bottom: 12px;" />
+    <label class="muted small">Minutes until reminder:
+      <input id="timerMinutes" type="number" min="1" max="120" value="20" style="margin-top: 6px;" />
+    </label>
+    <div class="row right" style="margin-top:12px;">
+      <button class="btn" id="timerCancel">Cancel</button>
+      <button class="btn timer" id="timerSave">Set Timer</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="toast hidden"></div>
 
 <script>
 /* ===== STATE ===== */
 const LS_KEY = "scanTracker.v1";
 const SYNC_KEY = "scanTracker.syncConfig";
+const USER_KEY = "scanTracker.currentUser";
 const DEFAULTS = {
   settings: { defaultInterval: 30, dueSoonMin: 5, sound: true },
   sites: [],
@@ -319,7 +369,10 @@ const DEFAULTS = {
 let state = loadState();
 let expandedMetrics = new Set();
 let syncConfig = JSON.parse(localStorage.getItem(SYNC_KEY) || "{}");
+let currentUser = localStorage.getItem(USER_KEY) || "";
 let syncInterval = null;
+let timers = {};
+let timerIntervals = {};
 
 /* ===== UTILITIES ===== */
 function loadState() {
@@ -357,7 +410,7 @@ function syncToGist() {
     })
   }).then(r => {
     if (r.ok) {
-      document.getElementById("syncStatus").textContent = "✓ Synced to Gist";
+      document.getElementById("syncStatus").textContent = "✓ Synced";
       document.getElementById("syncStatus").style.background = "rgba(34,197,94,0.2)";
       document.getElementById("syncStatus").style.color = "#86efac";
       setTimeout(() => {
@@ -423,6 +476,22 @@ function toast(msg, ms=2500) {
   setTimeout(()=>el.classList.add("hidden"), ms);
 }
 
+/* ===== USER MANAGEMENT ===== */
+function showUserModal() {
+  if (!currentUser) {
+    document.getElementById("userName").value = "";
+    document.getElementById("userModal").style.display = "flex";
+  }
+}
+
+function setUser(name) {
+  currentUser = name.trim();
+  localStorage.setItem(USER_KEY, currentUser);
+  document.getElementById("currentUser").textContent = currentUser || "No User";
+  document.getElementById("userModal").style.display = "none";
+  toast(`Welcome, ${currentUser}!`);
+}
+
 /* ===== SOUND / NOTIFICATIONS ===== */
 let chime;
 function ensureChime() {
@@ -471,8 +540,53 @@ function computeStatus(site) {
   return { last, dueAt, remaining, status };
 }
 
+/* ===== TIMERS ===== */
+function startTimer(siteId, siteName, minutes) {
+  const key = siteId;
+  const endTime = Date.now() + (minutes * 60 * 1000);
+  
+  timers[key] = { siteName, endTime };
+  
+  if (timerIntervals[key]) clearInterval(timerIntervals[key]);
+  
+  timerIntervals[key] = setInterval(() => {
+    const remaining = timers[key].endTime - Date.now();
+    
+    if (remaining <= 0) {
+      clearInterval(timerIntervals[key]);
+      delete timers[key];
+      delete timerIntervals[key];
+      notify("⏱️ Timer Alert!", `Time to check ${siteName}!`);
+      render();
+    } else {
+      render();
+    }
+  }, 1000);
+  
+  render();
+  toast(`Timer set for ${siteName}: ${minutes}m`);
+}
+
+function cancelTimer(siteId) {
+  if (timerIntervals[siteId]) clearInterval(timerIntervals[siteId]);
+  delete timers[siteId];
+  delete timerIntervals[siteId];
+  render();
+  toast("Timer cancelled");
+}
+
+function formatTimerDisplay(siteId) {
+  if (!timers[siteId]) return "";
+  const remaining = timers[siteId].endTime - Date.now();
+  if (remaining <= 0) return "0:00";
+  const mins = Math.floor(remaining / 60000);
+  const secs = Math.floor((remaining % 60000) / 1000);
+  return `${mins}:${String(secs).padStart(2, '0')}`;
+}
+
 /* ===== RENDER MAIN VIEW ===== */
 function render() {
+  document.getElementById("currentUser").textContent = currentUser || "No User";
   document.getElementById("tzLabel").textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
   document.getElementById("defaultInterval").value = state.settings.defaultInterval;
   document.getElementById("dueSoon").value = state.settings.dueSoonMin;
@@ -507,9 +621,11 @@ function render() {
     const dotClass = d.status==="ok" ? "green" : d.status==="dueSoon" ? "amber" : d.status==="overdue" ? "red" : "";
     const intervalMin = site.intervalMin ?? state.settings.defaultInterval;
     const isExpanded = expandedMetrics.has(site.id);
+    const hasTimer = !!timers[site.id];
+    const timerDisplay = formatTimerDisplay(site.id);
 
     card.innerHTML = `
-      <h3>${site.name}</h3>
+      <h3>${site.name} ${hasTimer ? `<span class="badge timer-active">⏱️ ${timerDisplay}</span>` : ''}</h3>
       <div class="row" style="gap:6px; flex-wrap:wrap;">
         <span class="badge"><span class="status-dot ${dotClass}"></span>${d.status==="never"?"Never scanned":d.status==="overdue"?"Overdue":d.status==="dueSoon"?"Due soon":"OK"}</span>
         <span class="badge">Interval: ${intervalMin}m</span>
@@ -524,6 +640,7 @@ function render() {
         <button class="btn success" data-act="scan" data-id="${site.id}">Scan Now</button>
         <button class="btn" data-act="details" data-id="${site.id}">Details</button>
         <button class="btn" data-act="edit" data-id="${site.id}">Edit</button>
+        <button class="btn timer" data-act="timer" data-id="${site.id}">${hasTimer ? 'Cancel Timer' : '⏱️ Timer'}</button>
         <button class="btn danger" data-act="delete" data-id="${site.id}">Delete</button>
       </div>
       <button class="toggle-btn ${isExpanded ? 'open' : ''}" data-toggle-id="${site.id}">
@@ -544,6 +661,28 @@ function render() {
       </div>
     `;
     grid.appendChild(card);
+  }
+
+  // Render timers section
+  const timersSection = document.getElementById("timersSection");
+  const timersList = document.getElementById("timersList");
+  if (Object.keys(timers).length > 0) {
+    timersSection.style.display = "block";
+    timersList.innerHTML = "";
+    for (const [siteId, timer] of Object.entries(timers)) {
+      const timerCard = document.createElement("div");
+      timerCard.className = "timer-card";
+      timerCard.innerHTML = `
+        <div class="timer-site-name">${timer.siteName}</div>
+        <div class="timer-display">${formatTimerDisplay(siteId)}</div>
+        <div class="timer-actions">
+          <button class="btn" data-timer-cancel="${siteId}">Cancel</button>
+        </div>
+      `;
+      timersList.appendChild(timerCard);
+    }
+  } else {
+    timersSection.style.display = "none";
   }
 
   document.getElementById("countOK").textContent = countOK;
@@ -571,7 +710,16 @@ function render() {
     if (act==="edit") btn.onclick = ()=> openSiteModal(sid);
     if (act==="delete") btn.onclick = ()=> deleteSite(sid);
     if (act==="details") btn.onclick = ()=> alertSiteDetails(sid);
+    if (act==="timer") btn.onclick = ()=> {
+      if (timers[sid]) cancelTimer(sid);
+      else openTimerModal(sid);
+    };
     if (toggleId) btn.onclick = ()=> toggleMetrics(toggleId, btn);
+  });
+
+  timersList.querySelectorAll("button").forEach(btn=>{
+    const timerId = btn.getAttribute("data-timer-cancel");
+    if (timerId) btn.onclick = ()=> cancelTimer(timerId);
   });
 }
 
@@ -653,6 +801,7 @@ function renderLogs() {
       <div>${logDate.toLocaleString().split(",")[0]}</div>
       <div>${logDate.toLocaleTimeString()}</div>
       <div><span class="log-badge ${badgeClass}">${statusText}</span></div>
+      <div><strong>${log.user || "Unknown"}</strong></div>
       <div class="small">${log.note ? `📝 ${log.note}` : (Object.keys(log.metrics||{}).length ? `📊 ${Object.keys(log.metrics).join(", ")}` : "")}</div>
     `;
     logsList.appendChild(div);
@@ -723,6 +872,7 @@ function saveSiteFromModal() {
   saveState(); syncToGist();
   document.getElementById("siteModal").style.display = "none";
   render();
+  toast("Site saved & synced!");
 }
 
 function deleteSite(siteId) {
@@ -730,6 +880,7 @@ function deleteSite(siteId) {
   state.sites = state.sites.filter(s=>s.id!==siteId);
   state.logs = state.logs.filter(l=>l.siteId!==siteId);
   expandedMetrics.delete(siteId);
+  cancelTimer(siteId);
   saveState(); syncToGist(); render(); toast("Deleted");
 }
 
@@ -771,6 +922,12 @@ function openScanModal(siteId) {
 }
 
 function saveScan() {
+  if (!currentUser) {
+    toast("Please set your name first!");
+    showUserModal();
+    return;
+  }
+
   const site = state.sites.find(s=>s.id===scanningSiteId);
   const inputs = document.querySelectorAll("#scanMetrics [data-metric]");
   const metrics = {};
@@ -779,11 +936,21 @@ function saveScan() {
     if (v) metrics[inp.getAttribute("data-metric")] = v;
   });
   const note = document.getElementById("scanNotes").value.trim();
-  state.logs.push({ siteId: site.id, ts: Date.now(), metrics, note });
+  state.logs.push({ siteId: site.id, ts: Date.now(), metrics, note, user: currentUser });
   saveState(); syncToGist();
   document.getElementById("scanModal").style.display = "none";
   render();
-  toast("Scan logged");
+  cancelTimer(scanningSiteId);
+  toast(`✓ Scan logged by ${currentUser}`);
+}
+
+/* ===== TIMER MODAL ===== */
+function openTimerModal(siteId) {
+  const site = state.sites.find(s=>s.id===siteId);
+  document.getElementById("timerSiteName").value = site.name;
+  document.getElementById("timerMinutes").value = "20";
+  document.getElementById("timerModal").style.display = "flex";
+  document.getElementById("timerModal").dataset.siteId = siteId;
 }
 
 /* ===== BULK ADD ===== */
@@ -801,7 +968,7 @@ function saveBulk() {
   }
   saveState(); syncToGist(); render();
   document.getElementById("bulkModal").style.display = "none";
-  toast(`Added ${names.length} site(s)`);
+  toast(`✓ Added ${names.length} site(s) & synced!`);
 }
 
 /* ===== EXPORT / IMPORT ===== */
@@ -814,13 +981,13 @@ function exportJSON() {
 }
 
 function exportLogsCSV() {
-  const rows = [["site","date","time","status","note"]];
+  const rows = [["site","date","time","status","user","note"]];
   const logs = [...state.logs].sort((a,b)=>b.ts-a.ts);
   logs.forEach(l => {
     const site = state.sites.find(s=>s.id===l.siteId);
     const d = new Date(l.ts);
     const status = "logged";
-    rows.push([site?.name||l.siteId, d.toLocaleString().split(",")[0], d.toLocaleTimeString(), status, l.note||""]);
+    rows.push([site?.name||l.siteId, d.toLocaleString().split(",")[0], d.toLocaleTimeString(), status, l.user||"Unknown", l.note||""]);
   });
   const csv = rows.map(r=>r.map(v=>{
     const s = String(v??"");
@@ -840,7 +1007,7 @@ function importJSONFile(file) {
       const obj = JSON.parse(e.target.result);
       if (!obj || !obj.sites || !obj.settings) throw new Error("Invalid file");
       state = obj; saveState(); syncToGist(); render();
-      toast("Imported");
+      toast("✓ Imported & synced!");
     } catch (err) {
       alert("Import failed: " + err.message);
     }
@@ -895,6 +1062,13 @@ function tick() {
 setInterval(tick, 1000);
 
 /* ===== WIRE UI ===== */
+document.getElementById("btnChangeUser").onclick = showUserModal;
+document.getElementById("btnSaveUser").onclick = ()=>{
+  const name = document.getElementById("userName").value.trim();
+  if (!name) { toast("Please enter a name"); return; }
+  setUser(name);
+};
+
 document.getElementById("btnAdd").onclick = ()=> openSiteModal(null);
 document.getElementById("addMetric").onclick = ()=> addMetricRow();
 document.getElementById("siteCancel").onclick = ()=> document.getElementById("siteModal").style.display = "none";
@@ -988,6 +1162,16 @@ document.getElementById("btnEnableSync").onclick = ()=>{
   document.getElementById("syncStatus").textContent = "🔄 Synced";
 };
 
+// Timer Modal
+document.getElementById("timerCancel").onclick = ()=> document.getElementById("timerModal").style.display = "none";
+document.getElementById("timerSave").onclick = ()=>{
+  const siteId = document.getElementById("timerModal").dataset.siteId;
+  const site = state.sites.find(s=>s.id===siteId);
+  const minutes = parseInt(document.getElementById("timerMinutes").value) || 20;
+  document.getElementById("timerModal").style.display = "none";
+  startTimer(siteId, site.name, minutes);
+};
+
 /* Seed example sites on first load */
 if (state.sites.length === 0) {
   state.sites.push(
@@ -1002,6 +1186,9 @@ if (state.sites.length === 0) {
   );
   saveState();
 }
+
+// Prompt for user on first load
+if (!currentUser) showUserModal();
 
 // Start everything
 startSync();
