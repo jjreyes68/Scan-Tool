@@ -73,7 +73,61 @@
   .amber { background: var(--warn); }
   .red { background: var(--danger); }
   .site-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-  details { margin-top: 8px; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metrics Page</title>
+    <style>
+        .collapsible {
+            background-color: #777;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+        }
+        .active, .collapsible:hover {
+            background-color: #555;
+        }
+        .content {
+            padding: 0 18px;
+            display: block;
+            overflow: hidden;
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Metrics</h2>
+
+<button class="collapsible">Metrics Dropdown</button>
+<div class="content">
+    <p>Metric 1: Example Data</p>
+    <p>Metric 2: Example Data</p>
+    <p>Metric 3: Example Data</p>
+</div>
+
+<script>
+    document.querySelector('.collapsible').addEventListener('click', function() {
+        this.classList.toggle('active');
+        var content = this.nextElementSibling;
+        if (content.style.display === "block") {
+            content.style.display = "none";
+        } else {
+            content.style.display = "block";
+        }
+    });
+</script>
+
+</body>
+</html>
+details { margin-top: 8px; }
   summary { cursor: pointer; color: var(--muted); }
   .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
   .kpi { background: #0b1220; border: 1px solid #1f2937; border-radius: 12px; padding: 8px; }
