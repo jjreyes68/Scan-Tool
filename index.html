@@ -17,6 +17,7 @@
     --card: #0b1220;
     --badge: #1f2937;
     --purple: #a78bfa;
+    --nerc: #06b6d4;
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
@@ -50,6 +51,8 @@
   .btn.warn { background: var(--warn); border-color: #d97706; color:#0b1320; }
   .btn.danger { background: var(--danger); border-color: #dc2626; color: #0b1320; }
   .btn.timer { background: var(--purple); border-color: #9333ea; color:#0b1320; }
+  .btn.sm { padding: 4px 6px; font-size: 11px; }
+  .btn.lg { padding: 12px 16px; font-size: 14px; font-weight: 600; }
   input[type="text"], input[type="number"], input[type="date"], textarea, select {
     background: #0b1220; color: var(--text); border: 1px solid #374151;
     padding: 8px 10px; border-radius: 10px; outline: none; width: 100%;
@@ -63,11 +66,12 @@
     border: 1px solid #1f2937; border-radius: 16px; padding: 14px; position: relative;
     box-shadow: 0 6px 16px rgba(0,0,0,0.35);
   }
-  .card h3 { margin: 0 0 6px 0; font-size: 16px; }
+  .card h3 { margin: 0 0 6px 0; font-size: 16px; display: flex; align-items: center; gap: 8px; }
   .badge {
     display: inline-block; font-size: 11px; color: var(--text);
     background: var(--badge); padding: 3px 8px; border-radius: 999px; border: 1px solid #374151;
   }
+  .badge.nerc { background: rgba(6, 182, 212, 0.2); border-color: var(--nerc); color: #67e8f9; font-weight: 600; }
   .badge.timer-active { background: rgba(167, 139, 250, 0.3); border-color: var(--purple); color: #e9d5ff; animation: pulse 2s infinite; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
   .status-dot {
@@ -77,11 +81,13 @@
   .green { background: var(--accent); }
   .amber { background: var(--warn); }
   .red { background: var(--danger); }
-  .site-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .site-actions { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+  .site-actions .btn.lg { flex: 1; min-width: 200px; }
+  .site-actions-secondary { display: flex; gap: 4px; flex-wrap: wrap; }
   .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
   .kpi { background: #0b1220; border: 1px solid #1f2937; border-radius: 12px; padding: 8px; }
   .kpi .label { font-size: 11px; color: var(--muted); }
-  .kpi .value { font-size: 14px; font-weight: 600; margin-top: 2px; }
+  .kpi .value { font-size: 14px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
   footer { color: var(--muted); font-size: 12px; margin-top: 16px; text-align:center; padding-bottom: 20px; }
   .section { background: rgba(17,24,39,0.4); border: 1px solid #1f2937; border-radius: 16px; padding: 12px; margin-top: 12px; }
   .row-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -138,6 +144,9 @@
   .timer-display { font-size: 32px; font-weight: bold; color: var(--purple); text-align: center; margin: 12px 0; font-family: monospace; }
   .timer-site-name { font-size: 14px; color: var(--text); text-align: center; margin-bottom: 12px; }
   .timer-actions { display: flex; gap: 8px; justify-content: center; }
+  .nerc-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .nerc-item { background: rgba(6, 182, 212, 0.1); border: 1px solid var(--nerc); padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; gap: 6px; font-size: 12px; }
+  .nerc-item button { padding: 2px 4px; font-size: 10px; }
 </style>
 </head>
 <body>
@@ -146,16 +155,16 @@
     <div class="row">
       <h1>Scan Tracker</h1>
       <span class="spacer"></span>
-      <div class="pill user"><strong id="currentUser">No User</strong> <button class="btn" id="btnChangeUser" style="padding: 4px 8px; margin-left: 6px; font-size: 11px;">Change</button></div>
+      <div class="pill user"><strong id="currentUser">No User</strong> <button class="btn sm" id="btnChangeUser">Change</button></div>
       <span id="syncStatus" class="sync-status">📱 Local Mode</span>
       <span id="clock" class="pill small"></span>
-      <button class="btn" id="btnNotify">Enable Notifications</button>
-      <button class="btn" id="btnSound">Sound: On</button>
-      <button class="btn" id="btnSummary">Handoff Summary</button>
-      <button class="btn" id="btnExport">Export</button>
-      <label class="btn" for="importFile">Import</label>
+      <button class="btn sm" id="btnNotify">Enable Notifications</button>
+      <button class="btn sm" id="btnSound">Sound: On</button>
+      <button class="btn sm" id="btnSummary">Handoff Summary</button>
+      <button class="btn sm" id="btnExport">Export</button>
+      <label class="btn sm" for="importFile">Import</label>
       <input id="importFile" type="file" accept=".json" style="display:none" />
-      <button class="btn" id="btnSetupSync">🔗 Setup Sync</button>
+      <button class="btn sm" id="btnSetupSync">🔗 Setup Sync</button>
     </div>
     <div class="row" style="margin-top:8px;">
       <input id="search" type="text" placeholder="Search sites…" style="max-width:260px" />
@@ -167,10 +176,12 @@
         <option value="never">Never scanned</option>
       </select>
       <span class="spacer"></span>
-      <button class="btn primary" id="btnAdd">Add Site</button>
-      <button class="btn" id="btnBulk">Bulk Add</button>
-      <button class="btn warn" id="btnResetShift">Reset Shift Logs</button>
-      <button class="btn" id="btnLogs">📊 Logs</button>
+      <button class="btn primary sm" id="btnAdd">Add Site</button>
+      <button class="btn sm" id="btnBulk">Bulk Add</button>
+      <button class="btn sm" id="btnNercMgmt">⚡ NERC Sites</button>
+      <button class="btn success" id="btnScanAll">Scan All NERC</button>
+      <button class="btn warn sm" id="btnResetShift">Reset Shift Logs</button>
+      <button class="btn sm" id="btnLogs">📊 Logs</button>
     </div>
     <div class="row" style="margin-top:8px;">
       <div class="pill small">Default interval: <input id="defaultInterval" type="number" min="5" step="5" style="width:80px;margin-left:6px" /> min</div>
@@ -212,8 +223,8 @@
         <select id="logFilterSite" style="max-width:200px;">
           <option value="">All Sites</option>
         </select>
-        <button class="btn primary" id="btnApplyLogFilter">Apply Filter</button>
-        <button class="btn" id="btnExportLogs">Export Logs</button>
+        <button class="btn primary sm" id="btnApplyLogFilter">Apply Filter</button>
+        <button class="btn sm" id="btnExportLogs">Export Logs</button>
       </div>
 
       <div class="row" style="gap:20px; margin-bottom:16px;">
@@ -226,7 +237,7 @@
       <div style="max-height: 600px; overflow-y: auto; border: 1px solid #1f2937; border-radius: 12px; padding: 12px;">
         <div id="logsList"></div>
       </div>
-      <button class="btn" id="btnBackLogs" style="margin-top:16px;">← Back to Sites</button>
+      <button class="btn sm" id="btnBackLogs" style="margin-top:16px;">← Back to Sites</button>
     </div>
   </div>
 
@@ -243,6 +254,29 @@
     <input id="userName" type="text" placeholder="Your name (e.g., John, Sarah)" />
     <div class="row right" style="margin-top:12px;">
       <button class="btn success" id="btnSaveUser">Save User</button>
+    </div>
+  </div>
+</div>
+
+<!-- NERC Management Modal -->
+<div class="modal-backdrop" id="nercModal">
+  <div class="modal">
+    <h3>⚡ NERC Sites Management</h3>
+    <p class="muted small">Add or remove sites from the NERC list. Use "Scan All NERC" to reset all at once.</p>
+    <div style="margin-bottom: 12px;">
+      <label class="muted small">Add site to NERC list:
+        <select id="nercSelect" style="margin-top: 6px;">
+          <option value="">-- Select a site --</option>
+        </select>
+      </label>
+      <button class="btn primary sm" id="btnAddNerc" style="margin-top: 8px;">Add to NERC</button>
+    </div>
+    <div>
+      <label class="muted small">Current NERC Sites:</label>
+      <div class="nerc-list" id="nercList"></div>
+    </div>
+    <div class="row right" style="margin-top:16px;">
+      <button class="btn" id="btnCloseNerc">Close</button>
     </div>
   </div>
 </div>
@@ -274,7 +308,7 @@
     </label>
 
     <div class="row right" style="margin-top:16px;">
-      <button class="btn" id="btnCancelSync">Cancel</button>
+      <button class="btn sm" id="btnCancelSync">Cancel</button>
       <button class="btn success" id="btnEnableSync">Enable Sync</button>
     </div>
   </div>
@@ -290,7 +324,7 @@
       <textarea id="scanNotes" rows="3" placeholder="Optional notes…"></textarea>
     </div>
     <div class="row right" style="margin-top:10px;">
-      <button class="btn" id="scanCancel">Cancel</button>
+      <button class="btn sm" id="scanCancel">Cancel</button>
       <button class="btn success" id="scanSave">Save Scan</button>
     </div>
   </div>
@@ -316,10 +350,10 @@
         <thead><tr><th>Name</th><th>Baseline</th><th>Unit</th><th>Guidance</th><th></th></tr></thead>
         <tbody></tbody>
       </table>
-      <button class="btn" id="addMetric">Add Metric</button>
+      <button class="btn sm" id="addMetric">Add Metric</button>
     </div>
     <div class="row right" style="margin-top:10px;">
-      <button class="btn" id="siteCancel">Cancel</button>
+      <button class="btn sm" id="siteCancel">Cancel</button>
       <button class="btn success" id="siteSave">Save</button>
     </div>
   </div>
@@ -332,7 +366,7 @@
     <p class="muted small">Paste one site name per line. Each will use the default interval.</p>
     <textarea id="bulkNames" rows="8" placeholder="Site 1&#10;Site 2&#10;Site 3"></textarea>
     <div class="row right" style="margin-top:10px;">
-      <button class="btn" id="bulkCancel">Cancel</button>
+      <button class="btn sm" id="bulkCancel">Cancel</button>
       <button class="btn success" id="bulkSave">Add Sites</button>
     </div>
   </div>
@@ -348,7 +382,7 @@
       <input id="timerMinutes" type="number" min="1" max="120" value="20" style="margin-top: 6px;" />
     </label>
     <div class="row right" style="margin-top:12px;">
-      <button class="btn" id="timerCancel">Cancel</button>
+      <button class="btn sm" id="timerCancel">Cancel</button>
       <button class="btn timer" id="timerSave">Set Timer</button>
     </div>
   </div>
@@ -361,6 +395,7 @@
 const LS_KEY = "scanTracker.v1";
 const SYNC_KEY = "scanTracker.syncConfig";
 const USER_KEY = "scanTracker.currentUser";
+const NERC_KEY = "scanTracker.nercSites";
 const DEFAULTS = {
   settings: { defaultInterval: 30, dueSoonMin: 5, sound: true },
   sites: [],
@@ -370,9 +405,11 @@ let state = loadState();
 let expandedMetrics = new Set();
 let syncConfig = JSON.parse(localStorage.getItem(SYNC_KEY) || "{}");
 let currentUser = localStorage.getItem(USER_KEY) || "";
+let nercSites = JSON.parse(localStorage.getItem(NERC_KEY) || "[]");
 let syncInterval = null;
 let timers = {};
 let timerIntervals = {};
+let renderInterval = null;
 
 /* ===== UTILITIES ===== */
 function loadState() {
@@ -392,6 +429,10 @@ function loadState() {
 
 function saveState() {
   localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+
+function saveNercSites() {
+  localStorage.setItem(NERC_KEY, JSON.stringify(nercSites));
 }
 
 function syncToGist() {
@@ -557,13 +598,11 @@ function startTimer(siteId, siteName, minutes) {
       delete timers[key];
       delete timerIntervals[key];
       notify("⏱️ Timer Alert!", `Time to check ${siteName}!`);
-      render();
-    } else {
-      render();
+      updateDisplay();
     }
   }, 1000);
   
-  render();
+  updateDisplay();
   toast(`Timer set for ${siteName}: ${minutes}m`);
 }
 
@@ -571,7 +610,7 @@ function cancelTimer(siteId) {
   if (timerIntervals[siteId]) clearInterval(timerIntervals[siteId]);
   delete timers[siteId];
   delete timerIntervals[siteId];
-  render();
+  updateDisplay();
   toast("Timer cancelled");
 }
 
@@ -584,7 +623,79 @@ function formatTimerDisplay(siteId) {
   return `${mins}:${String(secs).padStart(2, '0')}`;
 }
 
+/* ===== SORTING ===== */
+function getSortedSites() {
+  const sites = [...state.sites];
+  return sites.sort((a, b) => {
+    const statusA = computeStatus(a);
+    const statusB = computeStatus(b);
+    
+    // Overdue first
+    if (statusA.status === "overdue" && statusB.status !== "overdue") return -1;
+    if (statusA.status !== "overdue" && statusB.status === "overdue") return 1;
+    
+    // Within overdue, sort by time remaining (least first)
+    if (statusA.status === "overdue" && statusB.status === "overdue") {
+      return statusA.remaining - statusB.remaining;
+    }
+    
+    // Due soon second
+    if (statusA.status === "dueSoon" && statusB.status !== "dueSoon") return -1;
+    if (statusA.status !== "dueSoon" && statusB.status === "dueSoon") return 1;
+    
+    // Within due soon, sort by time remaining (least first)
+    if (statusA.status === "dueSoon" && statusB.status === "dueSoon") {
+      return statusA.remaining - statusB.remaining;
+    }
+    
+    // Never scanned third
+    if (statusA.status === "never" && statusB.status !== "never") return -1;
+    if (statusA.status !== "never" && statusB.status === "never") return 1;
+    
+    // OK last, alphabetical
+    return a.name.localeCompare(b.name);
+  });
+}
+
 /* ===== RENDER MAIN VIEW ===== */
+function updateDisplay() {
+  // Update countdown timers and remaining times
+  const grid = document.getElementById("grid");
+  const cards = grid.querySelectorAll(".card");
+  
+  cards.forEach(card => {
+    const siteId = card.dataset.siteId;
+    const site = state.sites.find(s => s.id === siteId);
+    if (!site) return;
+    
+    const d = computeStatus(site);
+    const timerDisplay = formatTimerDisplay(siteId);
+    const hasTimer = !!timers[siteId];
+    
+    // Update header
+    const header = card.querySelector("h3");
+    if (hasTimer) {
+      let timerBadge = header.querySelector(".badge.timer-active");
+      if (timerBadge) {
+        timerBadge.textContent = `⏱️ ${timerDisplay}`;
+      }
+    }
+    
+    // Update remaining time KPI
+    const remainingKpi = card.querySelector("[data-kpi='remaining']");
+    if (remainingKpi) {
+      remainingKpi.textContent = d.last ? fmtMinSec(d.dueAt - Date.now()) : "—";
+    }
+    
+    // Update timers section
+    const timersList = document.getElementById("timersList");
+    const timerCard = timersList.querySelector(`[data-timer-id="${siteId}"]`);
+    if (timerCard) {
+      timerCard.querySelector(".timer-display").textContent = timerDisplay;
+    }
+  });
+}
+
 function render() {
   document.getElementById("currentUser").textContent = currentUser || "No User";
   document.getElementById("tzLabel").textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -599,7 +710,7 @@ function render() {
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
 
-  const sites = [...state.sites].sort((a,b)=>a.name.localeCompare(b.name));
+  const sites = getSortedSites();
   for (const site of sites) {
     const d = computeStatus(site);
     if (d.status === "ok") countOK++;
@@ -617,15 +728,21 @@ function render() {
 
     const card = document.createElement("div");
     card.className = "card";
+    card.dataset.siteId = site.id;
 
     const dotClass = d.status==="ok" ? "green" : d.status==="dueSoon" ? "amber" : d.status==="overdue" ? "red" : "";
     const intervalMin = site.intervalMin ?? state.settings.defaultInterval;
     const isExpanded = expandedMetrics.has(site.id);
     const hasTimer = !!timers[site.id];
     const timerDisplay = formatTimerDisplay(site.id);
+    const isNerc = nercSites.includes(site.id);
 
     card.innerHTML = `
-      <h3>${site.name} ${hasTimer ? `<span class="badge timer-active">⏱️ ${timerDisplay}</span>` : ''}</h3>
+      <h3>
+        ${site.name}
+        ${isNerc ? '<span class="badge nerc">⚡ NERC</span>' : ''}
+        ${hasTimer ? `<span class="badge timer-active">⏱️ ${timerDisplay}</span>` : ''}
+      </h3>
       <div class="row" style="gap:6px; flex-wrap:wrap;">
         <span class="badge"><span class="status-dot ${dotClass}"></span>${d.status==="never"?"Never scanned":d.status==="overdue"?"Overdue":d.status==="dueSoon"?"Due soon":"OK"}</span>
         <span class="badge">Interval: ${intervalMin}m</span>
@@ -634,14 +751,16 @@ function render() {
       </div>
       <div class="kpis">
         <div class="kpi"><div class="label">Time since last</div><div class="value">${timeAgo(d.last)}</div></div>
-        <div class="kpi"><div class="label">Time remaining</div><div class="value">${d.last? fmtMinSec(d.dueAt - Date.now()) : "—"}</div></div>
+        <div class="kpi"><div class="label">Time remaining</div><div class="value" data-kpi="remaining">${d.last? fmtMinSec(d.dueAt - Date.now()) : "—"}</div></div>
       </div>
       <div class="site-actions">
-        <button class="btn success" data-act="scan" data-id="${site.id}">Scan Now</button>
-        <button class="btn" data-act="details" data-id="${site.id}">Details</button>
-        <button class="btn" data-act="edit" data-id="${site.id}">Edit</button>
-        <button class="btn timer" data-act="timer" data-id="${site.id}">${hasTimer ? 'Cancel Timer' : '⏱️ Timer'}</button>
-        <button class="btn danger" data-act="delete" data-id="${site.id}">Delete</button>
+        <button class="btn lg success" data-act="scan" data-id="${site.id}" style="flex: 1;">🔍 SCAN NOW</button>
+      </div>
+      <div class="site-actions-secondary">
+        <button class="btn sm" data-act="details" data-id="${site.id}">Details</button>
+        <button class="btn sm" data-act="edit" data-id="${site.id}">Edit</button>
+        <button class="btn timer sm" data-act="timer" data-id="${site.id}">${hasTimer ? 'Cancel ⏱️' : '⏱️'}</button>
+        <button class="btn danger sm" data-act="delete" data-id="${site.id}">Delete</button>
       </div>
       <button class="toggle-btn ${isExpanded ? 'open' : ''}" data-toggle-id="${site.id}">
         <span class="caret">▼</span>
@@ -672,11 +791,12 @@ function render() {
     for (const [siteId, timer] of Object.entries(timers)) {
       const timerCard = document.createElement("div");
       timerCard.className = "timer-card";
+      timerCard.dataset.timerId = siteId;
       timerCard.innerHTML = `
         <div class="timer-site-name">${timer.siteName}</div>
         <div class="timer-display">${formatTimerDisplay(siteId)}</div>
         <div class="timer-actions">
-          <button class="btn" data-timer-cancel="${siteId}">Cancel</button>
+          <button class="btn sm" data-timer-cancel="${siteId}">Cancel</button>
         </div>
       `;
       timersList.appendChild(timerCard);
@@ -702,6 +822,36 @@ function render() {
   });
   logFilterSite.value = currentVal;
 
+  // Update NERC select
+  const nercSelect = document.getElementById("nercSelect");
+  const nercCurrentVal = nercSelect.value;
+  nercSelect.innerHTML = '<option value="">-- Select a site --</option>';
+  sites.forEach(s => {
+    if (!nercSites.includes(s.id)) {
+      const opt = document.createElement("option");
+      opt.value = s.id;
+      opt.textContent = s.name;
+      nercSelect.appendChild(opt);
+    }
+  });
+  nercSelect.value = nercCurrentVal;
+
+  // Update NERC list display
+  const nercList = document.getElementById("nercList");
+  nercList.innerHTML = "";
+  nercSites.forEach(siteId => {
+    const site = state.sites.find(s => s.id === siteId);
+    if (site) {
+      const item = document.createElement("div");
+      item.className = "nerc-item";
+      item.innerHTML = `
+        ${site.name}
+        <button class="btn sm" data-nerc-remove="${siteId}">✕</button>
+      `;
+      nercList.appendChild(item);
+    }
+  });
+
   grid.querySelectorAll("button").forEach(btn=>{
     const act = btn.getAttribute("data-act");
     const sid = btn.getAttribute("data-id");
@@ -720,6 +870,15 @@ function render() {
   timersList.querySelectorAll("button").forEach(btn=>{
     const timerId = btn.getAttribute("data-timer-cancel");
     if (timerId) btn.onclick = ()=> cancelTimer(timerId);
+  });
+
+  nercList.querySelectorAll("button").forEach(btn=>{
+    const removeId = btn.getAttribute("data-nerc-remove");
+    if (removeId) btn.onclick = ()=> {
+      nercSites = nercSites.filter(id => id !== removeId);
+      saveNercSites();
+      render();
+    };
   });
 }
 
@@ -843,7 +1002,7 @@ function addMetricRow(name="", baseline="", unit="", guide="") {
     <td><input type="text" value="${baseline}"></td>
     <td><input type="text" value="${unit}"></td>
     <td><input type="text" value="${guide}"></td>
-    <td class="right-text"><button class="btn danger small">✕</button></td>
+    <td class="right-text"><button class="btn danger sm">✕</button></td>
   `;
   tr.querySelector("button").onclick = ()=> tr.remove();
   document.querySelector("#metricTable tbody").appendChild(tr);
@@ -879,9 +1038,10 @@ function deleteSite(siteId) {
   if (!confirm("Delete this site and its logs?")) return;
   state.sites = state.sites.filter(s=>s.id!==siteId);
   state.logs = state.logs.filter(l=>l.siteId!==siteId);
+  nercSites = nercSites.filter(id => id !== siteId);
   expandedMetrics.delete(siteId);
   cancelTimer(siteId);
-  saveState(); syncToGist(); render(); toast("Deleted");
+  saveState(); saveNercSites(); syncToGist(); render(); toast("Deleted");
 }
 
 /* ===== SCAN MODAL ===== */
@@ -944,6 +1104,33 @@ function saveScan() {
   toast(`✓ Scan logged by ${currentUser}`);
 }
 
+/* ===== SCAN ALL NERC ===== */
+function scanAllNerc() {
+  if (nercSites.length === 0) {
+    toast("No NERC sites configured");
+    return;
+  }
+
+  if (!currentUser) {
+    toast("Please set your name first!");
+    showUserModal();
+    return;
+  }
+
+  let count = 0;
+  for (const siteId of nercSites) {
+    const site = state.sites.find(s => s.id === siteId);
+    if (site) {
+      state.logs.push({ siteId: site.id, ts: Date.now(), metrics: {}, note: "Auto-scanned via Scan All", user: currentUser });
+      cancelTimer(siteId);
+      count++;
+    }
+  }
+
+  saveState(); syncToGist(); render();
+  toast(`✓ Scanned all ${count} NERC sites`);
+}
+
 /* ===== TIMER MODAL ===== */
 function openTimerModal(siteId) {
   const site = state.sites.find(s=>s.id===siteId);
@@ -951,6 +1138,11 @@ function openTimerModal(siteId) {
   document.getElementById("timerMinutes").value = "20";
   document.getElementById("timerModal").style.display = "flex";
   document.getElementById("timerModal").dataset.siteId = siteId;
+}
+
+/* ===== NERC MANAGEMENT ===== */
+function openNercModal() {
+  document.getElementById("nercModal").style.display = "flex";
 }
 
 /* ===== BULK ADD ===== */
@@ -1018,7 +1210,7 @@ function importJSONFile(file) {
 /* ===== HANDOFF SUMMARY ===== */
 function buildHandoffSummary() {
   const lines = [];
-  const sites = [...state.sites].sort((a,b)=>a.name.localeCompare(b.name));
+  const sites = getSortedSites();
   const soonMin = state.settings.dueSoonMin;
   let overdue=0, soon=0, ok=0, never=0;
 
@@ -1078,6 +1270,19 @@ document.getElementById("scanSave").onclick = saveScan;
 document.getElementById("btnBulk").onclick = openBulk;
 document.getElementById("bulkCancel").onclick = ()=> document.getElementById("bulkModal").style.display = "none";
 document.getElementById("bulkSave").onclick = saveBulk;
+document.getElementById("btnNercMgmt").onclick = openNercModal;
+document.getElementById("btnCloseNerc").onclick = ()=> document.getElementById("nercModal").style.display = "none";
+document.getElementById("btnAddNerc").onclick = ()=>{
+  const siteId = document.getElementById("nercSelect").value;
+  if (!siteId) { toast("Please select a site"); return; }
+  if (!nercSites.includes(siteId)) {
+    nercSites.push(siteId);
+    saveNercSites();
+    render();
+    toast("Site added to NERC list");
+  }
+};
+document.getElementById("btnScanAll").onclick = scanAllNerc;
 document.getElementById("btnExport").onclick = exportJSON;
 document.getElementById("importFile").onchange = e => {
   const file = e.target.files[0]; if (file) importJSONFile(file);
@@ -1189,6 +1394,9 @@ if (state.sites.length === 0) {
 
 // Prompt for user on first load
 if (!currentUser) showUserModal();
+
+// Active countdown timer updates
+setInterval(updateDisplay, 1000);
 
 // Start everything
 startSync();
