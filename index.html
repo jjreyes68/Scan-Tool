@@ -37,6 +37,7 @@
   h1 { margin: 0 0 8px 0; font-size: 22px; }
   h2 { margin: 16px 0 8px 0; font-size: 18px; }
   h3 { margin: 12px 0 6px 0; font-size: 16px; }
+  h4 { margin: 0; font-size: 14px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
   .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .row.right { justify-content: flex-end; }
   .spacer { flex: 1; }
@@ -57,6 +58,7 @@
     background: #0b1220; color: var(--text); border: 1px solid #374151;
     padding: 8px 10px; border-radius: 10px; outline: none; width: 100%;
   }
+  input[type="checkbox"] { transform: scale(1.3); cursor: pointer; }
   .grid {
     display: grid; gap: 12px; margin-top: 12px;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -67,6 +69,16 @@
     background: linear-gradient(to right, transparent, rgba(6, 182, 212, 0.6) 20%, rgba(6, 182, 212, 0.6) 80%, transparent);
     margin: 16px 0;
     box-shadow: 0 0 12px rgba(6, 182, 212, 0.3);
+  }
+  .section-header {
+    grid-column: 1 / -1;
+    padding: 12px 0 8px 0;
+    border-top: 1px solid #1f2937;
+    margin-top: 12px;
+  }
+  .section-header:first-child {
+    border-top: none;
+    margin-top: 0;
   }
   .card {
     background: linear-gradient(180deg, #0b1220, #0b1320);
@@ -157,6 +169,27 @@
   .nerc-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
   .nerc-item { background: rgba(6, 182, 212, 0.1); border: 1px solid var(--nerc); padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; gap: 6px; font-size: 12px; }
   .nerc-item button { padding: 2px 4px; font-size: 10px; }
+  .interval-selector {
+    display: flex; gap: 12px; align-items: flex-start; margin-top: 12px; padding: 12px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 10px;
+  }
+  .interval-option {
+    flex: 1; display: flex; flex-direction: column; gap: 6px;
+  }
+  .interval-option input[type="radio"] {
+    cursor: pointer;
+  }
+  .interval-option label {
+    font-size: 12px; display: flex; align-items: center; gap: 6px; cursor: pointer;
+  }
+  .interval-option p {
+    margin: 0; font-size: 11px; color: var(--muted);
+  }
+  .interval-input-wrapper {
+    display: flex; gap: 6px; align-items: center;
+  }
+  .interval-input-wrapper input[type="number"] {
+    width: 80px;
+  }
 </style>
 </head>
 <body>
@@ -345,17 +378,33 @@
 <div class="modal-backdrop" id="siteModal">
   <div class="modal">
     <h3 id="siteTitle">Add / Edit Site</h3>
-    <div class="row-wrap">
-      <div>
-        <label class="muted small">Site name</label>
-        <input id="siteName" type="text" placeholder="e.g., Desert Ridge BESS" />
+    <div>
+      <label class="muted small">Site name</label>
+      <input id="siteName" type="text" placeholder="e.g., Desert Ridge BESS" />
+    </div>
+
+    <div class="interval-selector">
+      <div class="interval-option">
+        <label>
+          <input type="radio" name="intervalType" value="scheduled" id="intervalTypeScheduled" checked />
+          📅 Scheduled Scans
+        </label>
+        <p>Regular scans on a set interval</p>
+        <div class="interval-input-wrapper" id="intervalInputWrapper">
+          <input id="siteInterval" type="number" min="5" step="5" placeholder="Minutes" />
+          <span class="small">minutes</span>
+        </div>
       </div>
-      <div>
-        <label class="muted small">Scan interval (minutes) <span class="muted" style="font-size:10px;">(leave blank for ad-hoc)</span></label>
-        <input id="siteInterval" type="number" min="5" step="5" placeholder="Optional" />
+      <div class="interval-option">
+        <label>
+          <input type="radio" name="intervalType" value="adhoc" id="intervalTypeAdhoc" />
+          📋 Ad-Hoc Only
+        </label>
+        <p>No cadence, scan as needed</p>
       </div>
     </div>
-    <div style="margin-top:8px;">
+
+    <div style="margin-top:12px;">
       <label class="muted small">Metrics (name | baseline | unit | guidance)</label>
       <table class="table" id="metricTable">
         <thead><tr><th>Name</th><th>Baseline</th><th>Unit</th><th>Guidance</th><th></th></tr></thead>
@@ -687,7 +736,7 @@ function getSortedSites() {
   const sortedNonNercCadenced = sortSiteGroup(nonNercCadenced);
   const sortedAdhoc = adhocSites.sort((a, b) => a.name.localeCompare(b.name));
   
-  return [...sortedNercCadenced, ...sortedNonNercCadenced, ...sortedAdhoc];
+  return { sortedNercCadenced, sortedNonNercCadenced, sortedAdhoc };
 }
 
 /* ===== RENDER MAIN VIEW ===== */
@@ -741,102 +790,118 @@ function render() {
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
 
-  const sites = getSortedSites();
-  let lastWasNonAdhoc = null;
-  let needsDivider = false;
+  const { sortedNercCadenced, sortedNonNercCadenced, sortedAdhoc } = getSortedSites();
 
-  for (let idx = 0; idx < sites.length; idx++) {
-    const site = sites[idx];
-    const d = computeStatus(site);
-    const isAdhoc = d.status === "adhoc";
-    
-    if (lastWasNonAdhoc === false && isAdhoc && needsDivider) {
-      const divider = document.createElement("div");
-      divider.className = "section-divider";
-      grid.appendChild(divider);
+  // Helper to render site group
+  const renderSiteGroup = (sites, groupName = null) => {
+    if (sites.length === 0) return;
+
+    let addedHeader = false;
+
+    for (const site of sites) {
+      const d = computeStatus(site);
+      
+      if (d.status === "ok") countOK++;
+      if (d.status === "dueSoon") countSoon++;
+      if (d.status === "overdue") countLate++;
+      if (d.status === "never") countNever++;
+      if (d.status === "adhoc") countAdhoc++;
+
+      const match = site.name.toLowerCase().includes(q);
+      let pass = (filter==="all");
+      
+      if (filter !== "all" && d.status !== "adhoc") {
+        pass = (filter==="ok" && d.status==="ok")
+          || (filter==="dueSoon" && d.status==="dueSoon")
+          || (filter==="overdue" && d.status==="overdue")
+          || (filter==="never" && d.status==="never");
+      }
+      
+      if (!match || !pass) continue;
+
+      if (!addedHeader && groupName) {
+        const header = document.createElement("div");
+        header.className = "section-header";
+        header.innerHTML = `<h4>${groupName}</h4>`;
+        grid.appendChild(header);
+        addedHeader = true;
+      }
+
+      const card = document.createElement("div");
+      card.className = "card";
+      card.dataset.siteId = site.id;
+
+      const dotClass = d.status==="ok" ? "green" : d.status==="dueSoon" ? "amber" : d.status==="overdue" ? "red" : "";
+      const isExpanded = expandedMetrics.has(site.id);
+      const hasTimer = !!timers[site.id];
+      const timerDisplay = formatTimerDisplay(site.id);
+      const isNerc = nercSites.includes(site.id);
+
+      let headerBadges = `
+        ${isNerc ? '<span class="badge nerc">⚡ NERC</span>' : ''}
+        ${d.status === "adhoc" ? '<span class="badge adhoc">📋 Ad-hoc</span>' : ''}
+        ${hasTimer ? `<span class="badge timer-active">⏱️ ${timerDisplay}</span>` : ''}
+      `;
+
+      card.innerHTML = `
+        <h3>
+          ${site.name}
+          ${headerBadges}
+        </h3>
+        ${d.status !== "adhoc" ? `
+          <span class="badge status"><span class="status-dot ${dotClass}"></span>${d.status==="never"?"Never scanned":d.status==="overdue"?"Overdue":d.status==="dueSoon"?"Due soon":"OK"}</span>
+          <div class="kpis" style="margin-top: 8px;">
+            <div class="kpi"><div class="label">Time since last</div><div class="value">${timeAgo(d.last)}</div></div>
+            <div class="kpi"><div class="label">Time remaining</div><div class="value" data-kpi="remaining">${d.last? fmtMinSec(d.dueAt - Date.now()) : "—"}</div></div>
+          </div>
+        ` : `
+          <div class="kpis" style="margin-top: 12px;">
+            <div class="kpi"><div class="label">Last scan</div><div class="value">${timeAgo(d.last)}</div></div>
+            <div class="kpi"><div class="label">Scans</div><div class="value">${state.logs.filter(l => l.siteId === site.id).length}</div></div>
+          </div>
+        `}
+        <div class="site-actions">
+          <button class="btn md success" data-act="scan" data-id="${site.id}">Scan Now</button>
+        </div>
+        <div class="site-actions-secondary">
+          <button class="btn sm" data-act="edit" data-id="${site.id}">Edit</button>
+          <button class="btn timer sm" data-act="timer" data-id="${site.id}">${hasTimer ? 'Cancel ⏱️' : '⏱️'}</button>
+          <button class="btn danger sm" data-act="delete" data-id="${site.id}">Delete</button>
+        </div>
+        ${site.metrics?.length ? `
+          <button class="toggle-btn ${isExpanded ? 'open' : ''}" data-toggle-id="${site.id}">
+            <span class="caret">▼</span>
+            Metrics & Guidance
+          </button>
+          <div class="metrics-content ${isExpanded ? 'open' : ''}" data-metrics-id="${site.id}">
+            <table class="table small">
+              <thead><tr><th>Metric</th><th>Baseline</th><th>Unit</th><th>Guidance</th></tr></thead>
+              <tbody>
+                ${site.metrics.map(m=>`
+                  <tr><td>${m.name||""}</td><td>${m.baseline??""}</td><td>${m.unit||""}</td><td>${m.guide||""}</td></tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        ` : ''}
+      `;
+      grid.appendChild(card);
     }
-    
-    if (d.status === "ok") countOK++;
-    if (d.status === "dueSoon") countSoon++;
-    if (d.status === "overdue") countLate++;
-    if (d.status === "never") countNever++;
-    if (d.status === "adhoc") countAdhoc++;
+  };
 
-    const match = site.name.toLowerCase().includes(q);
-    let pass = (filter==="all");
-    
-    if (filter !== "all" && d.status !== "adhoc") {
-      pass = (filter==="ok" && d.status==="ok")
-        || (filter==="dueSoon" && d.status==="dueSoon")
-        || (filter==="overdue" && d.status==="overdue")
-        || (filter==="never" && d.status==="never");
-    }
-    
-    if (!match || !pass) continue;
+  // Render NERC cadenced sites
+  renderSiteGroup(sortedNercCadenced, "⚡ NERC Sites");
 
-    needsDivider = true;
-    lastWasNonAdhoc = !isAdhoc;
+  // Render non-NERC cadenced sites
+  renderSiteGroup(sortedNonNercCadenced, "📅 Regular Sites");
 
-    const card = document.createElement("div");
-    card.className = "card";
-    card.dataset.siteId = site.id;
-
-    const dotClass = d.status==="ok" ? "green" : d.status==="dueSoon" ? "amber" : d.status==="overdue" ? "red" : "";
-    const isExpanded = expandedMetrics.has(site.id);
-    const hasTimer = !!timers[site.id];
-    const timerDisplay = formatTimerDisplay(site.id);
-    const isNerc = nercSites.includes(site.id);
-
-    let headerBadges = `
-      ${isNerc ? '<span class="badge nerc">⚡ NERC</span>' : ''}
-      ${isAdhoc ? '<span class="badge adhoc">📋 Ad-hoc</span>' : ''}
-      ${hasTimer ? `<span class="badge timer-active">⏱️ ${timerDisplay}</span>` : ''}
-    `;
-
-    card.innerHTML = `
-      <h3>
-        ${site.name}
-        ${headerBadges}
-      </h3>
-      ${!isAdhoc ? `
-        <span class="badge status"><span class="status-dot ${dotClass}"></span>${d.status==="never"?"Never scanned":d.status==="overdue"?"Overdue":d.status==="dueSoon"?"Due soon":"OK"}</span>
-        <div class="kpis" style="margin-top: 8px;">
-          <div class="kpi"><div class="label">Time since last</div><div class="value">${timeAgo(d.last)}</div></div>
-          <div class="kpi"><div class="label">Time remaining</div><div class="value" data-kpi="remaining">${d.last? fmtMinSec(d.dueAt - Date.now()) : "—"}</div></div>
-        </div>
-      ` : `
-        <div class="kpis" style="margin-top: 12px;">
-          <div class="kpi"><div class="label">Last scan</div><div class="value">${timeAgo(d.last)}</div></div>
-          <div class="kpi"><div class="label">Scans</div><div class="value">${state.logs.filter(l => l.siteId === site.id).length}</div></div>
-        </div>
-      `}
-      <div class="site-actions">
-        <button class="btn md success" data-act="scan" data-id="${site.id}">Scan Now</button>
-      </div>
-      <div class="site-actions-secondary">
-        <button class="btn sm" data-act="edit" data-id="${site.id}">Edit</button>
-        <button class="btn timer sm" data-act="timer" data-id="${site.id}">${hasTimer ? 'Cancel ⏱️' : '⏱️'}</button>
-        <button class="btn danger sm" data-act="delete" data-id="${site.id}">Delete</button>
-      </div>
-      ${site.metrics?.length ? `
-        <button class="toggle-btn ${isExpanded ? 'open' : ''}" data-toggle-id="${site.id}">
-          <span class="caret">▼</span>
-          Metrics & Guidance
-        </button>
-        <div class="metrics-content ${isExpanded ? 'open' : ''}" data-metrics-id="${site.id}">
-          <table class="table small">
-            <thead><tr><th>Metric</th><th>Baseline</th><th>Unit</th><th>Guidance</th></tr></thead>
-            <tbody>
-              ${site.metrics.map(m=>`
-                <tr><td>${m.name||""}</td><td>${m.baseline??""}</td><td>${m.unit||""}</td><td>${m.guide||""}</td></tr>
-              `).join("")}
-            </tbody>
-          </table>
-        </div>
-      ` : ''}
-    `;
-    grid.appendChild(card);
+  // Render ad-hoc sites with divider
+  if (sortedAdhoc.length > 0 && (sortedNercCadenced.length > 0 || sortedNonNercCadenced.length > 0)) {
+    const divider = document.createElement("div");
+    divider.className = "section-divider";
+    grid.appendChild(divider);
   }
+  renderSiteGroup(sortedAdhoc, "📋 Ad-Hoc Sites");
 
   // Render timers section
   const timersSection = document.getElementById("timersSection");
@@ -872,7 +937,7 @@ function render() {
   const logFilterSite = document.getElementById("logFilterSite");
   const currentVal = logFilterSite.value;
   logFilterSite.innerHTML = '<option value="">All Sites</option>';
-  sites.forEach(s => {
+  [...sortedNercCadenced, ...sortedNonNercCadenced, ...sortedAdhoc].forEach(s => {
     const opt = document.createElement("option");
     opt.value = s.id;
     opt.textContent = s.name;
@@ -883,7 +948,7 @@ function render() {
   const nercSelect = document.getElementById("nercSelect");
   const nercCurrentVal = nercSelect.value;
   nercSelect.innerHTML = '<option value="">-- Select a site --</option>';
-  sites.forEach(s => {
+  [...sortedNercCadenced, ...sortedNonNercCadenced, ...sortedAdhoc].forEach(s => {
     if (!nercSites.includes(s.id)) {
       const opt = document.createElement("option");
       opt.value = s.id;
@@ -1026,13 +1091,28 @@ function openSiteModal(siteId=null) {
   document.getElementById("siteTitle").textContent = siteId ? "Edit Site" : "Add Site";
   document.getElementById("siteName").value = "";
   document.getElementById("siteInterval").value = "";
+  document.getElementById("intervalTypeScheduled").checked = true;
+  document.getElementById("intervalTypeAdhoc").checked = false;
+  document.getElementById("siteInterval").disabled = false;
   const tbody = document.querySelector("#metricTable tbody");
   tbody.innerHTML = "";
 
   if (siteId) {
     const site = state.sites.find(s=>s.id===siteId);
     document.getElementById("siteName").value = site.name;
-    document.getElementById("siteInterval").value = site.intervalMin ?? "";
+    
+    if (site.intervalMin === null || site.intervalMin === 0 || site.intervalMin === "") {
+      document.getElementById("intervalTypeAdhoc").checked = true;
+      document.getElementById("intervalTypeScheduled").checked = false;
+      document.getElementById("siteInterval").disabled = true;
+      document.getElementById("siteInterval").value = "";
+    } else {
+      document.getElementById("intervalTypeScheduled").checked = true;
+      document.getElementById("intervalTypeAdhoc").checked = false;
+      document.getElementById("siteInterval").disabled = false;
+      document.getElementById("siteInterval").value = site.intervalMin;
+    }
+    
     for (const m of (site.metrics||[])) addMetricRow(m.name, m.baseline, m.unit, m.guide);
   } else {
     addMetricRow("Voltage", "", "V", "Expected operating band");
@@ -1064,8 +1144,14 @@ function collectMetricsFromTable() {
 
 function saveSiteFromModal() {
   const name = document.getElementById("siteName").value.trim();
-  const intervalVal = document.getElementById("siteInterval").value.trim();
-  const intervalMin = intervalVal ? Math.max(1, Number(intervalVal) || null) : null;
+  const isAdhoc = document.getElementById("intervalTypeAdhoc").checked;
+  
+  let intervalMin = null;
+  if (!isAdhoc) {
+    const intervalVal = document.getElementById("siteInterval").value.trim();
+    intervalMin = intervalVal ? Math.max(1, Number(intervalVal) || null) : state.settings.defaultInterval;
+  }
+  
   const metrics = collectMetricsFromTable();
   if (!name) { toast("Site name is required"); return; }
 
@@ -1258,7 +1344,8 @@ function importJSONFile(file) {
 /* ===== HANDOFF SUMMARY ===== */
 function buildHandoffSummary() {
   const lines = [];
-  const sites = getSortedSites();
+  const { sortedNercCadenced, sortedNonNercCadenced, sortedAdhoc } = getSortedSites();
+  const sites = [...sortedNercCadenced, ...sortedNonNercCadenced, ...sortedAdhoc];
   const soonMin = state.settings.dueSoonMin;
   let overdue=0, soon=0, ok=0, never=0;
 
@@ -1302,6 +1389,28 @@ function tick() {
   }
 }
 setInterval(tick, 1000);
+
+/* ===== INTERVAL TYPE TOGGLE ===== */
+document.addEventListener('DOMContentLoaded', () => {
+  const scheduledRadio = document.getElementById("intervalTypeScheduled");
+  const adhocRadio = document.getElementById("intervalTypeAdhoc");
+  const intervalInput = document.getElementById("siteInterval");
+
+  const updateIntervalUI = () => {
+    if (adhocRadio.checked) {
+      intervalInput.disabled = true;
+      intervalInput.value = "";
+    } else {
+      intervalInput.disabled = false;
+      if (!intervalInput.value) {
+        intervalInput.value = state.settings.defaultInterval;
+      }
+    }
+  };
+
+  scheduledRadio.addEventListener("change", updateIntervalUI);
+  adhocRadio.addEventListener("change", updateIntervalUI);
+});
 
 /* ===== WIRE UI ===== */
 document.getElementById("btnChangeUser").onclick = showUserModal;
