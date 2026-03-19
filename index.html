@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,7 +36,7 @@
   .wrap { max-width: 1400px; margin: 0 auto; padding: 16px; }
   h1 { margin: 0 0 8px 0; font-size: 22px; }
   h2 { margin: 16px 0 8px 0; font-size: 18px; }
-  h3 { margin: 12px 0 6px 0; font-size: 16px; }
+  h3 { margin: 12px 0 6px 0; font-size: 16px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   h4 { margin: 0; font-size: 14px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
   .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .row.right { justify-content: flex-end; }
@@ -88,7 +87,7 @@
   .amber { background: var(--warn); }
   .red { background: var(--danger); }
 
-  .site-actions { display: flex; gap: 6px; margin-top: 8px; }
+  .site-actions { display: flex; gap: 6px; margin-top: 8px; } /* (kept for backwards compat; unused now) */
   .site-actions .btn.md { flex: 1; padding: 6px 8px; font-size: 12px; }
   .site-actions-secondary { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
 
@@ -250,7 +249,7 @@
 
   <div id="logsView" style="display:none;">
     <div class="section">
-      <h2>Scan Logs & Analytics</h2>
+      <h2>Scan Logs &amp; Analytics</h2>
       <div class="row" style="gap:10px; margin-bottom:16px;">
         <label class="muted small">Filter by date:
           <input id="logFilterStart" type="date" style="width:140px; margin-left:6px;" />
@@ -269,7 +268,7 @@
         <div class="pill small"><strong id="logTotalScans">0</strong> Total Scans</div>
         <div class="pill small"><strong id="logOnTime">0</strong> On Time</div>
         <div class="pill small"><strong id="logLate5">0</strong> Within 5 min late</div>
-        <div class="pill small"><strong id="logVeryLate">0</strong> >5 min late</div>
+        <div class="pill small"><strong id="logVeryLate">0</strong> &gt;5 min late</div>
       </div>
 
       <div style="max-height: 600px; overflow-y: auto; border: 1px solid #1f2937; border-radius: 12px; padding: 12px;">
@@ -325,7 +324,7 @@
     <h3>⚙ Settings</h3>
 
     <div class="section" style="margin-top:8px;">
-      <h4>Find & Filter</h4>
+      <h4>Find &amp; Filter</h4>
       <div class="row">
         <input id="search" type="text" placeholder="Search sites…" style="max-width:260px" />
         <select id="filter">
@@ -339,7 +338,7 @@
     </div>
 
     <div class="section">
-      <h4>Intervals & Behavior</h4>
+      <h4>Intervals &amp; Behavior</h4>
       <div class="row" style="gap:8px;">
         <div class="pill small">Default interval: <input id="defaultInterval" type="number" min="5" step="5" style="width:80px;margin-left:6px" /> min</div>
         <div class="pill small">Due soon threshold: <input id="dueSoon" type="number" min="1" step="1" style="width:80px;margin-left:6px" /> min</div>
@@ -349,7 +348,7 @@
     </div>
 
     <div class="section">
-      <h4>Display & Alerts</h4>
+      <h4>Display &amp; Alerts</h4>
       <div class="row" style="gap:8px;">
         <button class="btn sm" id="btnCompact">Compact: Off</button>
         <button class="btn sm" id="btnNotify">Enable Notifications</button>
@@ -358,7 +357,7 @@
     </div>
 
     <div class="section">
-      <h4>Data & Sync</h4>
+      <h4>Data &amp; Sync</h4>
       <div class="row" style="gap:8px;">
         <button class="btn sm" id="btnSummary">Handoff Summary</button>
         <button class="btn sm" id="btnExport">Export</button>
@@ -455,12 +454,12 @@
     </div>
 
     <div style="margin-top:12px;">
-      <label class="muted small">Metrics (name | baseline | unit | guidance)</label>
+      <label class="muted small">Reference Points (metric | baseline)</label>
       <table class="table" id="metricTable">
-        <thead><tr><th>Name</th><th>Baseline</th><th>Unit</th><th>Guidance</th><th></th></tr></thead>
+        <thead><tr><th>Metric</th><th>Baseline</th><th></th></tr></thead>
         <tbody></tbody>
       </table>
-      <button class="btn sm" id="addMetric">Add Metric</button>
+      <button class="btn sm" id="addMetric">Add Reference Point</button>
     </div>
     <div class="row right" style="margin-top:10px;">
       <button class="btn sm" id="siteCancel">Cancel</button>
@@ -761,6 +760,18 @@ function updateDisplay() {
       remainingKpi.textContent = d.last ? fmtMinSec(d.dueAt - Date.now()) : "—";
     }
 
+    // Update header status-dot next to site name
+    const headerDot = header.querySelector(`[data-header-dot="${siteId}"]`);
+    if (headerDot) {
+      const cls = d.status==="ok" ? "green" : d.status==="dueSoon" ? "amber" : d.status==="overdue" ? "red" : "";
+      if (cls) {
+        headerDot.className = `status-dot ${cls}`;
+        headerDot.style.display = "inline-block";
+      } else {
+        headerDot.style.display = "none"; // hide for 'adhoc' or 'never'
+      }
+    }
+
     // Tick in timers list
     const timersList = document.getElementById("timersList");
     const timerCard = timersList.querySelector(`[data-timer-id="${siteId}"]`);
@@ -842,6 +853,7 @@ function render() {
       card.dataset.siteId = site.id;
 
       const dotClass = d.status==="ok" ? "green" : d.status==="dueSoon" ? "amber" : d.status==="overdue" ? "red" : "";
+      const showHeaderDot = (d.status==="ok" || d.status==="dueSoon" || d.status==="overdue");
       const isExpanded = expandedMetrics.has(site.id);
       const hasTimer = !!timers[site.id];
       const timerDisplay = formatTimerDisplay(site.id);
@@ -855,13 +867,13 @@ function render() {
 
       card.innerHTML = `
         <h3>
+          ${showHeaderDot ? `<span class="status-dot ${dotClass}" data-header-dot="${site.id}"></span>` : `<span class="status-dot" data-header-dot="${site.id}" style="display:none;"></span>`}
           ${site.name}
           ${headerBadges}
         </h3>
         ${d.status !== "adhoc" ? `
           <span class="badge status"><span class="status-dot ${dotClass}"></span>${d.status==="never"?"Never scanned":d.status==="overdue"?"Overdue":d.status==="dueSoon"?"Due soon":"OK"}</span>
           <div class="kpis" style="margin-top: 6px;">
-            <!-- Removed "Time since last" KPI as requested -->
             <div class="kpi"><div class="label">Time remaining</div><div class="value" data-kpi="remaining">${d.last? fmtMinSec(d.dueAt - Date.now()) : "—"}</div></div>
           </div>
         ` : `
@@ -870,10 +882,8 @@ function render() {
             <div class="kpi"><div class="label">Scans</div><div class="value">${state.logs.filter(l => l.siteId === site.id).length}</div></div>
           </div>
         `}
-        <div class="site-actions">
-          <button class="btn md success" data-act="scan" data-id="${site.id}">Scan Now</button>
-        </div>
         <div class="site-actions-secondary">
+          <button class="btn md success" data-act="scan" data-id="${site.id}">Scan Now</button>
           <button class="btn sm" data-act="edit" data-id="${site.id}">Edit</button>
           <button class="btn timer sm" data-act="timer" data-id="${site.id}">${hasTimer ? 'Cancel ⏱️' : '⏱️'}</button>
           <button class="btn danger sm" data-act="delete" data-id="${site.id}">Delete</button>
@@ -881,14 +891,14 @@ function render() {
         ${site.metrics?.length ? `
           <button class="toggle-btn ${isExpanded ? 'open' : ''}" data-toggle-id="${site.id}">
             <span class="caret">▼</span>
-            Metrics & Guidance
+            Reference Points
           </button>
           <div class="metrics-content ${isExpanded ? 'open' : ''}" data-metrics-id="${site.id}">
             <table class="table small">
-              <thead><tr><th>Metric</th><th>Baseline</th><th>Unit</th><th>Guidance</th></tr></thead>
+              <thead><tr><th>Metric</th><th>Baseline</th><th>Guidance</th></tr></thead>
               <tbody>
                 ${site.metrics.map(m=>`
-                  <tr><td>${m.name||""}</td><td>${m.baseline??""}</td><td>${m.unit||""}</td><td>${m.guide||""}</td></tr>
+                  <tr><td>${m.name||""}</td><td>${m.baseline??""}</td><td>${m.guide||""}</td></tr>
                 `).join("")}
               </tbody>
             </table>
@@ -1131,18 +1141,21 @@ function openSiteModal(siteId=null) {
 
     for (const m of (site.metrics||[])) addMetricRow(m.name, m.baseline, m.unit, m.guide);
   } else {
+    // seed one example reference point
     addMetricRow("Voltage", "", "V", "Expected operating band");
   }
 
   document.getElementById("siteModal").style.display = "flex";
 }
+/** Visible: metric+baseline. Hidden-preserved: unit+guide */
 function addMetricRow(name="", baseline="", unit="", guide="") {
   const tr = document.createElement("tr");
+  // store unit/guide on the row dataset to preserve values (not shown in UI)
+  tr.dataset.unit = unit || "";
+  tr.dataset.guide = guide || "";
   tr.innerHTML = `
     <td><input type="text" value="${name}"></td>
     <td><input type="text" value="${baseline}"></td>
-    <td><input type="text" value="${unit}"></td>
-    <td><input type="text" value="${guide}"></td>
     <td class="right-text"><button class="btn danger sm">✕</button></td>
   `;
   tr.querySelector("button").onclick = ()=> tr.remove();
@@ -1152,7 +1165,14 @@ function collectMetricsFromTable() {
   const rows = [...document.querySelectorAll("#metricTable tbody tr")];
   return rows.map(r=>{
     const inputs = r.querySelectorAll("input");
-    return { name: inputs[0].value.trim(), baseline: inputs[1].value.trim(), unit: inputs[2].value.trim(), guide: inputs[3].value.trim() };
+    const name = inputs[0].value.trim();
+    const baseline = inputs[1].value.trim();
+    return {
+      name,
+      baseline,
+      unit: r.dataset.unit || "",    // preserved (hidden)
+      guide: r.dataset.guide || ""   // preserved (hidden)
+    };
   }).filter(m=>m.name);
 }
 function saveSiteFromModal() {
@@ -1206,12 +1226,12 @@ function openScanModal(siteId) {
       wrap.innerHTML = `
         <div class="row" style="gap:10px; align-items:end;">
           <div style="flex: 1;">
-            <label class="muted small">${m.name}${m.unit?` (${m.unit})`:""}</label>
+            <label class="muted small">${m.name}</label>
             <input type="text" data-metric="${m.name}" placeholder="Enter value or leave blank"/>
           </div>
           <div style="width: 180px;">
             <label class="muted small">Baseline</label>
-            <div class="pill small">${m.baseline ?? ""} ${m.unit || ""}</div>
+            <div class="pill small">${m.baseline ?? ""}</div>
           </div>
         </div>
         ${m.guide ? `<div class="muted small" style="margin-top:2px;">Guidance: ${m.guide}</div>` : ""}
@@ -1219,7 +1239,7 @@ function openScanModal(siteId) {
       container.appendChild(wrap);
     }
   } else {
-    container.innerHTML = `<div class="muted small">No metrics defined for this site. You can still log notes.</div>`;
+    container.innerHTML = `<div class="muted small">No reference points defined for this site. You can still log notes.</div>`;
   }
 
   document.getElementById("scanNotes").value = "";
@@ -1540,6 +1560,9 @@ setInterval(updateDisplay, 1000);
 startSync();
 render();
 tick();
+
+/* Helper to show user modal when needed */
+function showUserModal(){ document.getElementById("userModal").style.display = "flex"; }
 </script>
 </body>
 </html>
