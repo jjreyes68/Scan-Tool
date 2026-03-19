@@ -55,23 +55,25 @@
   .btn.timer { background: var(--purple); border-color: #9333ea; color:#0b1320; }
   .btn.sm { padding: 4px 6px; font-size: 11px; }
   .btn.md { padding: 8px 12px; font-size: 13px; font-weight: 500; }
+
   input[type="text"], input[type="number"], input[type="date"], textarea, select {
     background: #0b1220; color: var(--text); border: 1px solid #374151;
     padding: 8px 10px; border-radius: 10px; outline: none; width: 100%;
   }
   input[type="checkbox"] { transform: scale(1.3); cursor: pointer; }
 
-  /* ====== DEFAULT: Slightly compact grid/cards (Quick Win) ====== */
+  /* ===== Compact-ish defaults for cards ===== */
   .grid {
     display: grid; gap: 10px; margin-top: 12px;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* was 280px */
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
   .card {
     background: linear-gradient(180deg, #0b1220, #0b1320);
     border: 1px solid #1f2937; border-radius: 12px; padding: 10px; position: relative;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.30); /* lighter */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.30);
   }
   .card h3 { margin: 0 0 4px 0; font-size: 14px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
   .badge {
     display: inline-block; font-size: 10px; color: var(--text);
     background: var(--badge); padding: 2px 6px; border-radius: 999px; border: 1px solid #374151;
@@ -85,27 +87,33 @@
   .green { background: var(--accent); }
   .amber { background: var(--warn); }
   .red { background: var(--danger); }
+
   .site-actions { display: flex; gap: 6px; margin-top: 8px; }
   .site-actions .btn.md { flex: 1; padding: 6px 8px; font-size: 12px; }
   .site-actions-secondary { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+
   .kpis { display: grid; grid-template-columns: 1fr; gap: 6px; margin-top: 6px; }
   .kpi { background: #0b1220; border: 1px solid #1f2937; border-radius: 10px; padding: 6px; }
   .kpi .label { font-size: 10px; color: var(--muted); }
   .kpi .value { font-size: 13px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
   footer { color: var(--muted); font-size: 12px; margin-top: 16px; text-align:center; padding-bottom: 20px; }
   .section { background: rgba(17,24,39,0.4); border: 1px solid #1f2937; border-radius: 16px; padding: 12px; margin-top: 12px; }
   .row-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   @media (max-width: 800px) { .row-wrap { grid-template-columns: 1fr; } }
+
   .pill {
     display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; border:1px solid #374151; background:#0b1220; font-size: 11px;
   }
   .pill.user { background: rgba(59,130,246,0.2); border-color: #2563eb; }
   .small { font-size: 12px; }
+
   .table { width:100%; border-collapse: collapse; }
   .table th, .table td { border-bottom: 1px dashed #1f2937; padding: 4px; text-align: left; font-size: 11px; }
   .right-text { text-align: right; }
   .toast { position: fixed; right: 12px; bottom: 12px; background: #111827; border: 1px solid #374151; color: var(--text); padding: 10px 12px; border-radius: 10px; opacity: 0.95; z-index: 1000; }
   .hidden { display: none; }
+
   .toggle-btn {
     background: none; border: none; color: var(--muted); cursor: pointer; padding: 0;
     font-size: 11px; display: flex; align-items: center; gap: 4px; margin-top: 6px;
@@ -138,7 +146,7 @@
   .modal-backdrop {
     position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100;
   }
-  .modal { background: #0b1320; border: 1px solid #1f2937; border-radius: 16px; padding: 16px; max-width: 560px; width: 96%; max-height: 90vh; overflow-y: auto; }
+  .modal { background: #0b1320; border: 1px solid #1f2937; border-radius: 16px; padding: 16px; max-width: 640px; width: 96%; max-height: 90vh; overflow-y: auto; }
   .modal h3 { margin-top: 0; }
 
   .setup-modal { background: #0b1320; border: 1px solid #1f2937; border-radius: 16px; padding: 20px; max-width: 600px; width: 96%; }
@@ -162,17 +170,7 @@
   .nerc-item { background: rgba(6, 182, 212, 0.1); border: 1px solid var(--nerc); padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; gap: 6px; font-size: 12px; }
   .nerc-item button { padding: 2px 4px; font-size: 10px; }
 
-  .interval-selector {
-    display: flex; gap: 12px; align-items: flex-start; margin-top: 12px; padding: 12px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: 10px;
-  }
-  .interval-option { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-  .interval-option input[type="radio"] { cursor: pointer; }
-  .interval-option label { font-size: 12px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
-  .interval-option p { margin: 0; font-size: 11px; color: var(--muted); }
-  .interval-input-wrapper { display: flex; gap: 6px; align-items: center; }
-  .interval-input-wrapper input[type="number"] { width: 80px; }
-
-  /* ====== Compact Mode profile ====== */
+  /* Compact Mode profile */
   body.compact .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
   body.compact .card { padding: 8px; border-radius: 10px; }
   body.compact .card h3 { font-size: 13px; gap: 4px; }
@@ -197,45 +195,35 @@
 <body>
 <header>
   <div class="wrap">
+    <!-- Row 1: Title + user/time/sync -->
     <div class="row">
       <h1>Scan Tracker</h1>
       <span class="spacer"></span>
       <div class="pill user"><strong id="currentUser">No User</strong> <button class="btn sm" id="btnChangeUser">Change</button></div>
       <span id="syncStatus" class="sync-status">📱 Local Mode</span>
       <span id="clock" class="pill small"></span>
-      <button class="btn sm" id="btnCompact">Compact: Off</button>
-      <button class="btn sm" id="btnNotify">Enable Notifications</button>
-      <button class="btn sm" id="btnSound">Sound: On</button>
-      <button class="btn sm" id="btnSummary">Handoff Summary</button>
-      <button class="btn sm" id="btnExport">Export</button>
-      <label class="btn sm" for="importFile">Import</label>
-      <input id="importFile" type="file" accept=".json" style="display:none" />
-      <button class="btn sm" id="btnSetupSync">🔗 Setup Sync</button>
     </div>
+
+    <!-- Row 2: Quick Timer + primary actions (ordered) + Settings -->
     <div class="row" style="margin-top:8px;">
-      <input id="search" type="text" placeholder="Search sites…" style="max-width:260px" />
-      <select id="filter">
-        <option value="all">All</option>
-        <option value="dueSoon">Due soon</option>
-        <option value="overdue">Overdue</option>
-        <option value="ok">OK (scanned recently)</option>
-        <option value="never">Never scanned</option>
-      </select>
-      <span class="spacer"></span>
-      <div class="pill small">Metrics auto-close (s):
-        <input id="metricsAutoClose" type="number" min="0" step="5" value="15" style="width:70px; margin-left:6px" />
+      <!-- Quick Timer pill -->
+      <div class="pill small" style="display:flex; gap:6px; align-items:center;">
+        ⏱️ Quick Timer:
+        <select id="qtSite" style="width: 220px;"></select>
+        <input id="qtMinutes" type="number" min="1" max="240" value="20" style="width:70px;" />
+        <input id="qtNote" type="text" placeholder="Note (optional)" style="width:220px;" />
+        <button class="btn timer sm" id="btnQtSet">Set</button>
+        <button class="btn sm" id="btnQtCancel">Cancel</button>
       </div>
-      <button class="btn primary sm" id="btnAdd">Add Site</button>
-      <button class="btn sm" id="btnBulk">Bulk Add</button>
-      <button class="btn sm" id="btnNercMgmt">⚡ NERC Sites</button>
+
+      <span class="spacer"></span>
+
+      <!-- Primary actions (ordered) -->
       <button class="btn success" id="btnScanAll">Scan All NERC</button>
-      <button class="btn warn sm" id="btnResetShift">Reset Shift Logs</button>
+      <button class="btn primary sm" id="btnAdd">Add Site</button>
+      <button class="btn sm" id="btnNercMgmt">⚡ NERC Sites</button>
       <button class="btn sm" id="btnLogs">📊 Logs</button>
-    </div>
-    <div class="row" style="margin-top:8px;">
-      <div class="pill small">Default interval: <input id="defaultInterval" type="number" min="5" step="5" style="width:80px;margin-left:6px" /> min</div>
-      <div class="pill small">Due soon threshold: <input id="dueSoon" type="number" min="1" step="1" style="width:80px;margin-left:6px" /> min</div>
-      <div class="pill small">Timezone: <span id="tzLabel"></span></div>
+      <button class="btn sm" id="btnSettings">⚙ Settings</button>
     </div>
   </div>
 </header>
@@ -331,12 +319,68 @@
   </div>
 </div>
 
+<!-- SETTINGS MODAL -->
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal">
+    <h3>⚙ Settings</h3>
+
+    <div class="section" style="margin-top:8px;">
+      <h4>Find & Filter</h4>
+      <div class="row">
+        <input id="search" type="text" placeholder="Search sites…" style="max-width:260px" />
+        <select id="filter">
+          <option value="all">All</option>
+          <option value="dueSoon">Due soon</option>
+          <option value="overdue">Overdue</option>
+          <option value="ok">OK (scanned recently)</option>
+          <option value="never">Never scanned</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Intervals & Behavior</h4>
+      <div class="row" style="gap:8px;">
+        <div class="pill small">Default interval: <input id="defaultInterval" type="number" min="5" step="5" style="width:80px;margin-left:6px" /> min</div>
+        <div class="pill small">Due soon threshold: <input id="dueSoon" type="number" min="1" step="1" style="width:80px;margin-left:6px" /> min</div>
+        <div class="pill small">Metrics auto-close (s): <input id="metricsAutoClose" type="number" min="0" step="5" value="15" style="width:80px; margin-left:6px" /></div>
+        <div class="pill small">Timezone: <span id="tzLabel"></span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Display & Alerts</h4>
+      <div class="row" style="gap:8px;">
+        <button class="btn sm" id="btnCompact">Compact: Off</button>
+        <button class="btn sm" id="btnNotify">Enable Notifications</button>
+        <button class="btn sm" id="btnSound">Sound: On</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Data & Sync</h4>
+      <div class="row" style="gap:8px;">
+        <button class="btn sm" id="btnSummary">Handoff Summary</button>
+        <button class="btn sm" id="btnExport">Export</button>
+        <label class="btn sm" for="importFile">Import</label>
+        <input id="importFile" type="file" accept=".json" style="display:none" />
+        <button class="btn sm" id="btnSetupSync">🔗 Setup Sync</button>
+        <button class="btn warn sm" id="btnResetShift">Reset Shift Logs</button>
+      </div>
+    </div>
+
+    <div class="row right" style="margin-top:10px;">
+      <button class="btn" id="btnCloseSettings">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- Setup Sync Modal -->
 <div class="modal-backdrop" id="setupSyncModal">
   <div class="setup-modal">
     <h2>🔗 Setup Multi-User Sync</h2>
     <p>Want multiple users to see the same sites? Use a free GitHub Gist!</p>
-    
+
     <h3>Step 1: Create a GitHub Gist</h3>
     <ol>
       <li>Go to <code>gist.github.com</code></li>
@@ -438,7 +482,7 @@
   </div>
 </div>
 
-<!-- Quick Timer Modal -->
+<!-- Quick Timer Modal (tile-triggered) -->
 <div class="modal-backdrop" id="timerModal">
   <div class="modal">
     <h3>⏱️ Set Quick Timer</h3>
@@ -467,19 +511,20 @@ const USER_KEY = "scanTracker.currentUser";
 const NERC_KEY = "scanTracker.nercSites";
 const COMPACT_KEY = "scanTracker.compact";
 const DEFAULTS = {
-  settings: { defaultInterval: 30, dueSoonMin: 5, sound: true, metricsAutoCloseSec: 15 }, // NEW: metrics auto-close
+  settings: { defaultInterval: 30, dueSoonMin: 5, sound: true, metricsAutoCloseSec: 15 },
   sites: [],
   logs: []
 };
 let state = loadState();
 let expandedMetrics = new Set();
-let metricsTimers = {}; // NEW: timers per-site for metrics auto-close
+let metricsTimers = {};
 let syncConfig = JSON.parse(localStorage.getItem(SYNC_KEY) || "{}");
 let currentUser = localStorage.getItem(USER_KEY) || "";
 let nercSites = JSON.parse(localStorage.getItem(NERC_KEY) || "[]");
 let syncInterval = null;
-let timers = {};
-let timerIntervals = {};
+
+let timers = {};          // { [siteId]: { siteName, endTime, note } }
+let timerIntervals = {};  // { [siteId]: setIntervalId }
 
 /* ===== UTILITIES ===== */
 function loadState() {
@@ -609,32 +654,39 @@ function computeStatus(site) {
   return { last, dueAt, remaining, status };
 }
 
-/* ===== TIMERS ===== */
+/* ===== TIMERS (hardened to force render) ===== */
 function startTimer(siteId, siteName, minutes, note) {
+  const minNum = Math.max(1, Number(minutes) || 0);
   const key = siteId;
-  const endTime = Date.now() + (minutes * 60 * 1000);
-  timers[key] = { siteName, endTime, note };
+  const endTime = Date.now() + (minNum * 60 * 1000);
+  timers[key] = { siteName, endTime, note: note || "" };
+
   if (timerIntervals[key]) clearInterval(timerIntervals[key]);
   timerIntervals[key] = setInterval(() => {
-    const remaining = timers[key].endTime - Date.now();
+    const remaining = timers[key]?.endTime - Date.now();
     if (remaining <= 0) {
       clearInterval(timerIntervals[key]);
       delete timers[key];
       delete timerIntervals[key];
       notify("⏱️ Timer Alert!", `Time to check ${siteName}!`);
-      updateDisplay();
+      render();                 // <- force full UI update
+    } else {
+      updateDisplay();          // digits tick
     }
   }, 1000);
-  updateDisplay();
-  toast(`Timer set for ${siteName}: ${minutes}m`);
+
+  render();  // <- ensure timers section & card badges appear immediately
+  toast(`Timer set for ${siteName}: ${minNum}m`);
 }
+
 function cancelTimer(siteId) {
   if (timerIntervals[siteId]) clearInterval(timerIntervals[siteId]);
   delete timers[siteId];
   delete timerIntervals[siteId];
-  updateDisplay();
+  render();  // <- ensure badges & timers list update immediately
   toast("Timer cancelled");
 }
+
 function formatTimerDisplay(siteId) {
   if (!timers[siteId]) return "";
   const remaining = timers[siteId].endTime - Date.now();
@@ -647,6 +699,7 @@ function formatTimerDisplay(siteId) {
 /* ===== SORTING ===== */
 function getSortedSites() {
   const sites = [...state.sites];
+
   const cadencedSites = sites.filter(s => {
     const interval = s.intervalMin;
     return interval !== null && interval !== 0 && interval !== "";
@@ -655,8 +708,10 @@ function getSortedSites() {
     const interval = s.intervalMin;
     return interval === null || interval === 0 || interval === "";
   });
+
   const nercCadenced = cadencedSites.filter(s => nercSites.includes(s.id));
   const nonNercCadenced = cadencedSites.filter(s => !nercSites.includes(s.id));
+
   const sortSiteGroup = (group) => {
     return group.sort((a, b) => {
       const statusA = computeStatus(a);
@@ -672,9 +727,11 @@ function getSortedSites() {
       return a.name.localeCompare(b.name);
     });
   };
+
   const sortedNercCadenced = sortSiteGroup(nercCadenced);
   const sortedNonNercCadenced = sortSiteGroup(nonNercCadenced);
   const sortedAdhoc = adhocSites.sort((a, b) => a.name.localeCompare(b.name));
+
   return { sortedNercCadenced, sortedNonNercCadenced, sortedAdhoc };
 }
 
@@ -682,36 +739,66 @@ function getSortedSites() {
 function updateDisplay() {
   const grid = document.getElementById("grid");
   const cards = grid.querySelectorAll(".card");
+
   cards.forEach(card => {
     const siteId = card.dataset.siteId;
     if (!siteId) return;
+
     const site = state.sites.find(s => s.id === siteId);
     if (!site) return;
+
     const d = computeStatus(site);
     const timerDisplay = formatTimerDisplay(siteId);
     const hasTimer = !!timers[siteId];
+
     const header = card.querySelector("h3");
     if (hasTimer) {
       let timerBadge = header.querySelector(".badge.timer-active");
       if (timerBadge) timerBadge.textContent = `⏱️ ${timerDisplay}`;
     }
     const remainingKpi = card.querySelector("[data-kpi='remaining']");
-    if (remainingKpi && d.remaining !== null) remainingKpi.textContent = d.last ? fmtMinSec(d.dueAt - Date.now()) : "—";
+    if (remainingKpi && d.remaining !== null) {
+      remainingKpi.textContent = d.last ? fmtMinSec(d.dueAt - Date.now()) : "—";
+    }
+
+    // Tick in timers list
     const timersList = document.getElementById("timersList");
     const timerCard = timersList.querySelector(`[data-timer-id="${siteId}"]`);
-    if (timerCard) timerCard.querySelector(".timer-display").textContent = timerDisplay;
+    if (timerCard) {
+      timerCard.querySelector(".timer-display").textContent = timerDisplay;
+    }
   });
 }
 
 function render() {
+  // Populate Quick Timer site select
+  const qtSite = document.getElementById("qtSite");
+  if (qtSite) {
+    const prev = qtSite.value;
+    qtSite.innerHTML = "";
+    state.sites
+      .slice()
+      .sort((a,b)=>a.name.localeCompare(b.name))
+      .forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s.id; opt.textContent = s.name;
+        qtSite.appendChild(opt);
+      });
+    // keep prior selection if possible
+    if ([...qtSite.options].some(o => o.value === prev)) qtSite.value = prev;
+  }
+
+  // Header small displays
   document.getElementById("currentUser").textContent = currentUser || "No User";
   document.getElementById("tzLabel").textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
   document.getElementById("defaultInterval").value = state.settings.defaultInterval;
   document.getElementById("dueSoon").value = state.settings.dueSoonMin;
   document.getElementById("btnSound").textContent = `Sound: ${state.settings.sound ? "On" : "Off"}`;
-  document.getElementById("metricsAutoClose").value = Number(state.settings.metricsAutoCloseSec || 0);
+  const mac = Number(state.settings.metricsAutoCloseSec || 0);
+  const macInput = document.getElementById("metricsAutoClose");
+  if (macInput) macInput.value = mac;
 
-  const q = document.getElementById("search").value.toLowerCase().trim();
+  const q = (document.getElementById("search").value || "").toLowerCase().trim();
   const filter = document.getElementById("filter").value;
 
   let countOK=0, countSoon=0, countLate=0, countNever=0, countAdhoc=0;
@@ -723,6 +810,7 @@ function render() {
   const renderSiteGroup = (sites, groupName = null) => {
     if (sites.length === 0) return;
     let addedHeader = false;
+
     for (const site of sites) {
       const d = computeStatus(site);
       if (d.status === "ok") countOK++;
@@ -773,7 +861,7 @@ function render() {
         ${d.status !== "adhoc" ? `
           <span class="badge status"><span class="status-dot ${dotClass}"></span>${d.status==="never"?"Never scanned":d.status==="overdue"?"Overdue":d.status==="dueSoon"?"Due soon":"OK"}</span>
           <div class="kpis" style="margin-top: 6px;">
-            <div class="kpi"><div class="label">Time since last</div><div class="value">${timeAgo(d.last)}</div></div>
+            <!-- Removed "Time since last" KPI as requested -->
             <div class="kpi"><div class="label">Time remaining</div><div class="value" data-kpi="remaining">${d.last? fmtMinSec(d.dueAt - Date.now()) : "—"}</div></div>
           </div>
         ` : `
@@ -820,6 +908,7 @@ function render() {
   }
   renderSiteGroup(sortedAdhoc, "📋 Ad-Hoc Sites");
 
+  // Timers section
   const timersSection = document.getElementById("timersSection");
   const timersList = document.getElementById("timersList");
   if (Object.keys(timers).length > 0) {
@@ -843,6 +932,7 @@ function render() {
     timersSection.style.display = "none";
   }
 
+  // Stats
   document.getElementById("countOK").textContent = countOK;
   document.getElementById("countSoon").textContent = countSoon;
   document.getElementById("countLate").textContent = countLate;
@@ -850,6 +940,7 @@ function render() {
   document.getElementById("countAdhoc").textContent = countAdhoc;
   document.getElementById("totalSites").textContent = state.sites.length;
 
+  // Logs site filter options
   const logFilterSite = document.getElementById("logFilterSite");
   const currentVal = logFilterSite.value;
   logFilterSite.innerHTML = '<option value="">All Sites</option>';
@@ -858,6 +949,7 @@ function render() {
   });
   logFilterSite.value = currentVal;
 
+  // NERC select and list
   const nercSelect = document.getElementById("nercSelect");
   const nercCurrentVal = nercSelect.value;
   nercSelect.innerHTML = '<option value="">-- Select a site --</option>';
@@ -883,6 +975,7 @@ function render() {
     }
   });
 
+  // Wire tile + timers list buttons
   grid.querySelectorAll("button").forEach(btn=>{
     const act = btn.getAttribute("data-act");
     const sid = btn.getAttribute("data-id");
@@ -914,12 +1007,10 @@ function render() {
 
 /* ===== Metrics toggle with auto-close ===== */
 function scheduleMetricsAutoClose(siteId) {
-  // clear previous if exists
   if (metricsTimers[siteId]) { clearTimeout(metricsTimers[siteId]); delete metricsTimers[siteId]; }
   const sec = Number(state.settings.metricsAutoCloseSec || 0);
   if (sec > 0) {
     metricsTimers[siteId] = setTimeout(() => {
-      // Only close if still open
       if (expandedMetrics.has(siteId)) {
         expandedMetrics.delete(siteId);
         const btn = document.querySelector(`.toggle-btn[data-toggle-id="${siteId}"]`);
@@ -1025,6 +1116,7 @@ function openSiteModal(siteId=null) {
   if (siteId) {
     const site = state.sites.find(s=>s.id===siteId);
     document.getElementById("siteName").value = site.name;
+
     if (site.intervalMin === null || site.intervalMin === 0 || site.intervalMin === "") {
       document.getElementById("intervalTypeAdhoc").checked = true;
       document.getElementById("intervalTypeScheduled").checked = false;
@@ -1036,10 +1128,12 @@ function openSiteModal(siteId=null) {
       document.getElementById("siteInterval").disabled = false;
       document.getElementById("siteInterval").value = site.intervalMin;
     }
+
     for (const m of (site.metrics||[])) addMetricRow(m.name, m.baseline, m.unit, m.guide);
   } else {
     addMetricRow("Voltage", "", "V", "Expected operating band");
   }
+
   document.getElementById("siteModal").style.display = "flex";
 }
 function addMetricRow(name="", baseline="", unit="", guide="") {
@@ -1064,11 +1158,13 @@ function collectMetricsFromTable() {
 function saveSiteFromModal() {
   const name = document.getElementById("siteName").value.trim();
   const isAdhoc = document.getElementById("intervalTypeAdhoc").checked;
+
   let intervalMin = null;
   if (!isAdhoc) {
     const intervalVal = document.getElementById("siteInterval").value.trim();
     intervalMin = intervalVal ? Math.max(1, Number(intervalVal) || null) : state.settings.defaultInterval;
   }
+
   const metrics = collectMetricsFromTable();
   if (!name) { toast("Site name is required"); return; }
 
@@ -1090,7 +1186,7 @@ function deleteSite(siteId) {
   nercSites = nercSites.filter(id => id !== siteId);
   expandedMetrics.delete(siteId);
   if (metricsTimers[siteId]) { clearTimeout(metricsTimers[siteId]); delete metricsTimers[siteId]; }
-  cancelTimer(siteId);
+  cancelTimer(siteId); // also forces render
   saveState(); saveNercSites(); syncToGist(); render(); toast("Deleted");
 }
 
@@ -1140,7 +1236,7 @@ function saveScan() {
   saveState(); syncToGist();
   document.getElementById("scanModal").style.display = "none";
   render();
-  cancelTimer(scanningSiteId);
+  cancelTimer(scanningSiteId); // clears any pending timer for the site
   toast(`✓ Scan logged by ${currentUser}`);
 }
 
@@ -1161,7 +1257,7 @@ function scanAllNerc() {
   toast(`✓ Scanned all ${count} NERC sites`);
 }
 
-/* ===== TIMER MODAL ===== */
+/* ===== TIMER MODAL (from tiles) ===== */
 function openTimerModal(siteId) {
   const site = state.sites.find(s=>s.id===siteId);
   document.getElementById("timerSiteName").value = site.name;
@@ -1295,9 +1391,7 @@ document.getElementById("siteCancel").onclick = ()=> document.getElementById("si
 document.getElementById("siteSave").onclick = saveSiteFromModal;
 document.getElementById("scanCancel").onclick = ()=> document.getElementById("scanModal").style.display = "none";
 document.getElementById("scanSave").onclick = saveScan;
-document.getElementById("btnBulk").onclick = openBulk;
-document.getElementById("bulkCancel").onclick = ()=> document.getElementById("bulkModal").style.display = "none";
-document.getElementById("bulkSave").onclick = saveBulk;
+
 document.getElementById("btnNercMgmt").onclick = openNercModal;
 document.getElementById("btnCloseNerc").onclick = ()=> document.getElementById("nercModal").style.display = "none";
 document.getElementById("btnAddNerc").onclick = ()=>{
@@ -1310,7 +1404,31 @@ document.getElementById("btnAddNerc").onclick = ()=>{
     toast("Site added to NERC list");
   }
 };
+
 document.getElementById("btnScanAll").onclick = scanAllNerc;
+
+/* Settings modal open/close */
+document.getElementById("btnSettings").onclick = ()=>{ document.getElementById("settingsModal").style.display = "flex"; };
+document.getElementById("btnCloseSettings").onclick = ()=>{ document.getElementById("settingsModal").style.display = "none"; };
+
+/* Logs nav */
+document.getElementById("btnLogs").onclick = ()=>{
+  document.getElementById("mainView").style.display = "none";
+  document.getElementById("logsView").style.display = "block";
+  const end = new Date();
+  const start = new Date(end - 30*24*60*60*1000);
+  document.getElementById("logFilterStart").valueAsDate = start;
+  document.getElementById("logFilterEnd").valueAsDate = end;
+  renderLogs();
+};
+document.getElementById("btnBackLogs").onclick = ()=>{
+  document.getElementById("logsView").style.display = "none";
+  document.getElementById("mainView").style.display = "block";
+};
+document.getElementById("btnApplyLogFilter").onclick = renderLogs;
+document.getElementById("btnExportLogs").onclick = exportLogsCSV;
+
+/* Former header controls now in Settings */
 document.getElementById("btnExport").onclick = exportJSON;
 document.getElementById("importFile").onchange = e => { const file = e.target.files[0]; if (file) importJSONFile(file); e.target.value = ""; };
 document.getElementById("btnSummary").onclick = ()=>{
@@ -1333,7 +1451,7 @@ document.getElementById("filter").onchange = render;
 document.getElementById("defaultInterval").onchange = e=>{ state.settings.defaultInterval = Math.max(1, Number(e.target.value)||30); saveState(); syncToGist(); render(); };
 document.getElementById("dueSoon").onchange = e=>{ state.settings.dueSoonMin = Math.max(1, Number(e.target.value)||5); saveState(); syncToGist(); render(); };
 
-/* Compact Mode toggle */
+/* Compact toggle in Settings */
 const compactStored = localStorage.getItem(COMPACT_KEY) === "1";
 if (compactStored) { document.body.classList.add("compact"); const btn = document.getElementById("btnCompact"); if (btn) btn.textContent = "Compact: On"; }
 document.getElementById("btnCompact").onclick = () => {
@@ -1342,36 +1460,21 @@ document.getElementById("btnCompact").onclick = () => {
   document.getElementById("btnCompact").textContent = `Compact: ${enabled ? "On" : "Off"}`;
 };
 
-/* Metrics auto-close control */
+/* Metrics auto-close */
 document.getElementById("metricsAutoClose").onchange = (e)=>{
   const val = Math.max(0, Number(e.target.value) || 0);
   state.settings.metricsAutoCloseSec = val;
   saveState(); syncToGist();
-  // reschedule any currently open panels
   [...expandedMetrics].forEach(siteId => scheduleMetricsAutoClose(siteId));
 };
 
+/* Reset shift */
 document.getElementById("btnResetShift").onclick = ()=>{
   if (!confirm("Clear all scan logs for this shift? Sites & settings are kept.")) return;
   state.logs = []; saveState(); syncToGist(); render(); toast("Shift logs cleared");
 };
 
-document.getElementById("btnLogs").onclick = ()=>{
-  document.getElementById("mainView").style.display = "none";
-  document.getElementById("logsView").style.display = "block";
-  const end = new Date();
-  const start = new Date(end - 30*24*60*60*1000);
-  document.getElementById("logFilterStart").valueAsDate = start;
-  document.getElementById("logFilterEnd").valueAsDate = end;
-  renderLogs();
-};
-document.getElementById("btnBackLogs").onclick = ()=>{
-  document.getElementById("logsView").style.display = "none";
-  document.getElementById("mainView").style.display = "block";
-};
-document.getElementById("btnApplyLogFilter").onclick = renderLogs;
-document.getElementById("btnExportLogs").onclick = exportLogsCSV;
-
+/* Setup Sync modal */
 document.getElementById("btnSetupSync").onclick = ()=>{
   document.getElementById("gistId").value = syncConfig.gistId || "";
   document.getElementById("autoSync").checked = syncConfig.autoSync !== false;
@@ -1387,6 +1490,33 @@ document.getElementById("btnEnableSync").onclick = ()=>{
   toast("Sync enabled! Syncing now...");
   startSync();
   document.getElementById("syncStatus").textContent = "🔄 Synced";
+};
+
+/* Quick Timer pill — Set/Cancel */
+document.getElementById("btnQtSet").onclick = ()=>{
+  const siteId = document.getElementById("qtSite").value;
+  const site = state.sites.find(s=>s.id===siteId);
+  if (!site) { toast("Select a site"); return; }
+  const minutes = Math.max(1, Number(document.getElementById("qtMinutes").value) || 0);
+  const note = document.getElementById("qtNote").value.trim();
+  startTimer(siteId, site.name, minutes, note);
+};
+document.getElementById("btnQtCancel").onclick = ()=>{
+  const siteId = document.getElementById("qtSite").value;
+  if (!siteId) { toast("Select a site"); return; }
+  if (!timers[siteId]) { toast("No active timer for that site"); return; }
+  cancelTimer(siteId);
+};
+
+/* Timer modal buttons */
+document.getElementById("timerCancel").onclick = ()=> document.getElementById("timerModal").style.display = "none";
+document.getElementById("timerSave").onclick = ()=>{
+  const siteId = document.getElementById("timerModal").dataset.siteId;
+  const site = state.sites.find(s=>s.id===siteId);
+  const minutes = Math.max(1, Number(document.getElementById("timerMinutes").value) || 0);
+  const note = document.getElementById("timerNote").value.trim();
+  document.getElementById("timerModal").style.display = "none";
+  startTimer(siteId, site.name, minutes, note);
 };
 
 /* Seed example sites on first load */
