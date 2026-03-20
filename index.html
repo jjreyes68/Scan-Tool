@@ -10,14 +10,14 @@
     --panel: #111827;
     --muted: #9ca3af;
     --text: #e5e7eb;
-    --accent: #22c55e;
+    --accent: #22c55e;      /* traffic-light OK */
     --warn: #f59e0b;
     --danger: #ef4444;
-    --blue: #3b82f6;
+    --blue: #06b6d4;        /* RNWBL-leaning cyan primary */
     --card: #0b1220;
     --badge: #1f2937;
     --purple: #a78bfa;
-    --nerc: #06b6d4;
+    --nerc: #06b6d4;        /* NERC highlight stays cyan */
     --tab-bg: #0b1220;
     --tab-active: #e5e7eb;
     --tab-inactive: #9ca3af;
@@ -50,7 +50,7 @@
     padding: 8px 10px; border-radius: 10px; cursor: pointer; font-size: 12px;
   }
   .btn:hover { background: #111827; }
-  .btn.primary { background: var(--blue); border-color: #2563eb; }
+  .btn.primary { background: var(--blue); border-color: #0891b2; }   /* darker teal border */
   .btn.success { background: var(--accent); border-color: #16a34a; color:#0b1320; }
   .btn.warn { background: var(--warn); border-color: #d97706; color:#0b1320; }
   .btn.danger { background: var(--danger); border-color: #dc2626; color: #0b1320; }
@@ -98,14 +98,17 @@
 
   /* ===== Cards / tiles ===== */
   .grid {
-    display: grid; gap: 10px; margin-top: 12px;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* wider min to avoid pill “tall” look */
+    column-gap: 12px;  /* wider horizontal air */
+    row-gap: 16px;     /* wider vertical air between rows */
+    margin-top: 12px;
   }
   .card {
     background: linear-gradient(180deg, #0b1220, #0b1320);
-    border: 1px solid #172036;
+    border: 1px solid #172036;  /* softer border */
     border-radius: 12px; padding: 10px; position: relative;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.22);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.22); /* lighter shadow */
   }
   .card h3 { margin: 0 0 4px 0; font-size: 14px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
 
@@ -220,8 +223,8 @@
   .nerc-item { background: rgba(6, 182, 212, 0.1); border: 1px solid var(--nerc); padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; gap: 6px; font-size: 12px; }
   .nerc-item button { padding: 2px 4px; font-size: 10px; }
 
-  /* Compact Mode profile */
-  body.compact .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+  /* Compact Mode profile (now a touch roomier too) */
+  body.compact .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); column-gap: 10px; row-gap: 14px; }
   body.compact .card { padding: 8px; border-radius: 10px; }
   body.compact .card h3 { font-size: 13px; gap: 4px; }
   body.compact .badge { font-size: 9.5px; padding: 2px 5px; }
@@ -247,7 +250,7 @@
     <div class="row">
       <h1>Scan Tracker</h1>
       <span class="spacer"></span>
-      <div class="pill user"><strong id="currentUser">No User</</strong> <button class="btn sm" id="btnChangeUser">Change</button></div>
+      <div class="pill user"><strong id="currentUser">No User</strong> <button class="btn sm" id="btnChangeUser">Change</button></div>
       <span id="syncStatus" class="sync-status">📱 Local Mode</span>
       <span id="clock" class="pill small"></span>
     </div>
