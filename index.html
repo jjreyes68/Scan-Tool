@@ -110,7 +110,7 @@
     border-radius: 12px; padding: 10px; position: relative;
     box-shadow: 0 3px 8px rgba(0,0,0,0.22); /* lighter shadow */
   }
-  .card h3 { margin: 0 0 4px 0; font-size: 14px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+  .card h3 { margin: 0 0 4px 0; font-size: 14px; display: flex; align-items: center; gap: 5px; }
 
   .badge {
     display: inline-block; font-size: 10px; color: var(--text);
@@ -628,25 +628,67 @@ function toast(msg, ms=2500) {
 }
 
 /* ===== SOUND / NOTIFICATIONS ===== */
-let chime;
-function ensureChime() {
-  if (!chime) {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    chime = () => {
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "sine"; o.frequency.value = 880;
-      o.connect(g); g.connect(ctx.destination);
-      g.gain.setValueAtTime(0.0001, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.1, ctx.currentTime+0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.6);
-      o.start(); o.stop(ctx.currentTime+0.6);
-    };
+/* Replaced with unlock-once + centralized ping */
+let audioCtx = null;
+let chime = null;
+let audioUnlocked = false;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+async function unlockAudio() {
+  try {
+    const ctx = getAudioCtx();
+    if (ctx.state === 'suspended') {
+      await ctx.resume(); // must be triggered by a user gesture
+    }
+    if (!chime) {
+      chime = () => {
+        const ctx = getAudioCtx();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(880, ctx.currentTime);
+        o.connect(g); g.connect(ctx.destination);
+        g.gain.setValueAtTime(0.0001, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+        o.start(); o.stop(ctx.currentTime + 0.5);
+      };
+    }
+    audioUnlocked = true;
+    return true;
+  } catch (e) {
+    console.warn('Audio unlock failed:', e);
+    return false;
   }
 }
+
+// Prime unlock on the first user interaction in the session
+(function primeAudioOnFirstGesture(){
+  const once = async () => {
+    await unlockAudio();
+    if (state.settings.sound && typeof chime === 'function') chime(); // one audible confirmation
+  };
+  window.addEventListener('pointerdown', once, { once: true, capture: true });
+  window.addEventListener('keydown',      once, { once: true, capture: true });
+})();
+
+// Centralized ping that honors settings and unlocks as needed
+async function playPing() {
+  if (!state.settings.sound) return;
+  if (!audioUnlocked) await unlockAudio();
+  if (typeof chime === 'function') chime();
+}
+
+// Keep visual notification, route sound through playPing()
 function notify(title, body) {
-  try { if (Notification.permission === "granted") new Notification(title, { body }); } catch(e){}
-  if (state.settings.sound) { ensureChime(); chime(); }
+  try {
+    if (Notification.permission === "granted") new Notification(title, { body });
+  } catch(e){}
+  playPing();
 }
 
 /* ===== DERIVED DATA ===== */
@@ -691,7 +733,6 @@ function syncToGist() {
   }).catch(err => console.log("Sync error:", err));
 }
 function mergeRemoteIntoLocal(remote) {
-  // Merge sites by id (keep existing fields, remote fills any missing)
   const byId = new Map();
   state.sites.forEach(s => byId.set(s.id, s));
   (remote.sites || []).forEach(rs => {
@@ -701,14 +742,12 @@ function mergeRemoteIntoLocal(remote) {
   });
   state.sites = Array.from(byId.values());
 
-  // Merge logs by (siteId+ts) or id if present
   const logKey = l => l.id || `${l.siteId}_${l.ts}`;
   const logsMap = new Map();
   state.logs.forEach(l => logsMap.set(logKey(l), l));
   (remote.logs || []).forEach(l => logsMap.set(logKey(l), l));
   state.logs = Array.from(logsMap.values());
 
-  // Merge settings conservatively (keep current, backfill remote defaults)
   state.settings = { ...(remote.settings || {}), ...(state.settings || {}) };
 }
 function syncFromGist() {
@@ -722,7 +761,6 @@ function syncFromGist() {
       const content = gist.files['scan-tracker-data.json'].content;
       const remoteData = (JSON.parse(content) || {}).data || {};
       if (remoteData.sites && remoteData.settings) {
-        // SAFER: merge instead of replace
         mergeRemoteIntoLocal(remoteData);
         saveState();
         render();
@@ -992,7 +1030,7 @@ function render() {
     grid.appendChild(card);
   };
 
-  // Tab-aware rendering (keep NERC divider only on NERC tab)
+  // Tab-aware rendering
   if (currentTab === "nerc") {
     [...sortedNercCadenced].forEach(s => addSiteCard(s));
     if (sortedNercAdhoc.length > 0) {
@@ -1565,7 +1603,20 @@ document.getElementById("btnNotify").onclick = async ()=>{
     else toast("Notifications not granted");
   } catch(e){ toast("Notifications not supported"); }
 };
-document.getElementById("btnSound").onclick = ()=>{ state.settings.sound = !state.settings.sound; saveState(); syncToGist(); render(); };
+
+/* Sound toggle — patched to unlock + test ping */
+document.getElementById("btnSound").onclick = async ()=>{
+  state.settings.sound = !state.settings.sound;
+  saveState(); syncToGist(); render();
+  if (state.settings.sound) {
+    await unlockAudio();  // unlock due to explicit user gesture
+    playPing();           // audible confirmation
+    toast("Sound enabled");
+  } else {
+    toast("Sound disabled");
+  }
+};
+
 document.getElementById("search").oninput = render;
 document.getElementById("filter").onchange = render;
 document.getElementById("defaultInterval").onchange = e=>{ state.settings.defaultInterval = Math.max(1, Number(e.target.value)||30); saveState(); syncToGist(); render(); };
